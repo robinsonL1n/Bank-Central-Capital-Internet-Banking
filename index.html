@@ -415,7 +415,7 @@
     #dashboard-screen > aside { display: none; }
     #dashboard-screen > div { min-height: 0 !important; }
     #dashboard-screen > div > .absolute.inset-0 { position: relative; inset: auto; }
-    #statistics-view, #settings-view, #savings-view { grid-column: 1 / -1; }
+    #statistics-view, #settings-view, #savings-view, #more-view { grid-column: 1 / -1; }
 
     /* Semua panel jadi item grid: Kartu (atas) -> Tabungan | Kurva -> Pengeluaran -> Transaksi */
     #mid-col:not(.hidden), #right-col:not(.hidden), #mid-col-inner, #right-col > div { display: contents; }
@@ -619,6 +619,9 @@ html.cards-anim, html.cards-anim body { overflow-x: hidden; }
 .mc-vaso b { display: block; font-size: 5.8cqw; font-weight: 800; font-style: italic; letter-spacing: -.07em; line-height: 1; }
 .mc-vaso span { display: block; margin-top: .6cqw; font-size: max(6px, 1.85cqw); font-weight: 500; letter-spacing: .08em; color: rgba(255,255,255,.65); }
 .cc-ok { color: #16a34a; font-weight: 700; }
+.cc-plan { margin: 0; padding: 10px 12px; list-style: none; border-radius: 10px; background: #fff; display: flex; flex-direction: column; gap: 6px; }
+.cc-plan li { display: flex; justify-content: space-between; gap: 8px; font-size: 11px; color: #7a7f8e; }
+.cc-plan b { color: #11131a; font-weight: 700; }
     </style>
 </head>
 <body class="min-h-screen flex items-center justify-center p-4 sm:p-8 text-neutral-900 antialiased">
@@ -831,6 +834,12 @@ html.cards-anim, html.cards-anim body { overflow-x: hidden; }
                         class="nav-item w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-neutral-500 hover:bg-slate-50 hover:text-neutral-950 text-xs sm:text-sm font-medium transition cursor-pointer">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
                         <span>Settings</span>
+                    </button>
+
+                    <button type="button" onclick="selectNav(this, 'More')" 
+                        class="nav-item w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-neutral-500 hover:bg-slate-50 hover:text-neutral-950 text-xs sm:text-sm font-medium transition cursor-pointer">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+                        <span>More</span>
                     </button>
 
                     <button type="button" onclick="selectNav(this, 'Support')" 
@@ -1220,6 +1229,19 @@ html.cards-anim, html.cards-anim body { overflow-x: hidden; }
         </div>
 
         <!-- ===== TAB SAVINGS: hanya kartu saving + tombol tambah ===== -->
+        <div id="more-view" class="hidden lg:col-span-9">
+            <div class="bg-[#f8f9fa] rounded-2xl p-6 min-h-[420px] flex flex-col">
+                <div class="mb-6">
+                    <h2 class="text-lg font-bold text-neutral-950">More</h2>
+                    <p class="text-xs text-neutral-400 mt-0.5">Fitur tambahan Bank Central Capital</p>
+                </div>
+                <div class="flex-1 flex flex-col items-center justify-center text-center gap-3 text-neutral-400">
+                    <svg class="w-10 h-10" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+                    <p class="text-sm">Segera hadir</p>
+                </div>
+            </div>
+        </div>
+
         <div id="savings-view" class="hidden lg:col-span-9 relative min-h-[800px]">
             <div class="absolute inset-0 flex flex-col">
                 <div class="flex items-end justify-between mb-4 shrink-0">
@@ -1385,6 +1407,7 @@ html.cards-anim, html.cards-anim body { overflow-x: hidden; }
                 <button type="button" onclick="closeTransfer()" aria-label="Close" class="shrink-0 w-8 h-8 rounded-lg bg-slate-100 hover:bg-slate-200 text-neutral-600 cursor-pointer">✕</button>
             </div>
             <p class="text-xs text-neutral-500"><span>Available balance</span>: <strong id="tf-balance" class="text-neutral-900">Rp 0</strong></p>
+            <p class="text-xs text-neutral-500 -mt-2"><span>Transfer limit left today</span>: <strong id="tf-limit" class="text-neutral-900">Rp 0</strong></p>
             <div><label class="block text-[11px] font-semibold text-neutral-500 mb-1" for="tf-card">Recipient card number</label>
                 <input id="tf-card" inputmode="numeric" autocomplete="off" maxlength="19" placeholder="0000 0000 0000 0000" oninput="this.value = this.value.replace(/\D/g, '').slice(0, 16).replace(/(\d{4})(?=\d)/g, '$1 ')" class="w-full bg-slate-100/80 px-3.5 py-3 rounded-lg text-sm text-neutral-900 placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-navy-900/30 transition font-mono tracking-wider"></div>
             <div><label class="block text-[11px] font-semibold text-neutral-500 mb-1" for="tf-amount">Amount (Rp)</label>
@@ -1589,6 +1612,7 @@ html.cards-anim, html.cards-anim body { overflow-x: hidden; }
             Promise.resolve(window.BCC_loadCard && BCC_loadCard(email))
                 .then(() => window.BCC && BCC.switchUser(email))
                 .then(() => window.BCC_claimInbox && BCC_claimInbox())
+                .then(() => window.BCC_chargeFee && BCC_chargeFee())
                 .catch(e => console.error(e));
             if (p.job === 'Priority Client') p.job = '';
             seSave(); applyProfileToSidebar();
@@ -1674,9 +1698,11 @@ html.cards-anim, html.cards-anim body { overflow-x: hidden; }
             const isSavings = menuName === 'Savings';
             const isStats = menuName === 'Statistics';
             const isSettings = menuName === 'Settings';
+            const isMore = menuName === 'More';
             closeAllPanels();
-            document.getElementById('mid-col').classList.toggle('hidden', isSavings || isStats || isSettings);
-            document.getElementById('right-col').classList.toggle('hidden', isSavings || isStats || isSettings);
+            document.getElementById('mid-col').classList.toggle('hidden', isSavings || isStats || isSettings || isMore);
+            document.getElementById('right-col').classList.toggle('hidden', isSavings || isStats || isSettings || isMore);
+            document.getElementById('more-view').classList.toggle('hidden', !isMore);
             document.getElementById('settings-view').classList.toggle('hidden', !isSettings);
             if (isSettings) renderSettings();
             document.getElementById('savings-view').classList.toggle('hidden', !isSavings);
@@ -2555,6 +2581,10 @@ Premium card for active customers.|Kartu premium untuk nasabah aktif.|||||
 Top-tier card for long-standing customers.|Kartu tingkat tertinggi untuk nasabah setia.|||||
 Own a Gold card|Memiliki kartu Gold|||||
 Minimum transactions|Jumlah transaksi minimal|||||
+Transfer limit left today|Sisa limit transfer hari ini|||||
+Monthly fee|Biaya bulanan|||||
+Daily transfer limit|Limit transfer per hari|||||
+More|Lainnya|||||
 Hello 👋|Halo 👋|Hola 👋|Bonjour 👋|Hallo 👋|你好 👋|こんにちは 👋
 Total Balance|Total Saldo|Saldo total|Solde total|Gesamtsaldo|总余额|合計残高
 Apply by email|Ajukan lewat email|||||
@@ -2639,6 +2669,7 @@ Offers & promotions|Penawaran & promosi|Ofertas y promociones|Offres et promotio
         const EN_IDX = {}; ROWS.forEach(r => EN_IDX[r[0]] = r);
         // Sumber berbahasa Indonesia -> Inggris
         const ID2EN = {
+            'Melebihi limit transfer harian.': 'Daily transfer limit exceeded.', 'Segera hadir': 'Coming soon', 'Fitur tambahan Bank Central Capital': 'Additional Bank Central Capital features',
             'Selamat! Kartu Platinum berhasil didapatkan.': 'Congratulations! Your Platinum card is ready.', 'Syarat Kartu Platinum belum terpenuhi.': 'The Platinum card requirements have not been met yet.',
             'Gagal mengklaim kartu Platinum.': 'Failed to claim the Platinum card.',
             'Verifikasi': 'Verify', 'Kami akan mengirim kode 6 digit ke email ini.': 'We will send a 6-digit code to this email.',
@@ -2685,6 +2716,8 @@ Offers & promotions|Penawaran & promosi|Ofertas y promociones|Offres et promotio
             'Permintaan upgrade ke Robin Black Metal Card dikirim.': 'Your upgrade request for the Robin Black Metal Card was sent.'
         };
         const ID_RX = [
+            [/^Melebihi limit transfer harian\. Sisa limit hari ini (.*)\.$/, 'Daily transfer limit exceeded. Remaining limit today: $1.'],
+            [/^Biaya administrasi bulanan (.*) telah dipotong\.$/, 'The monthly admin fee of $1 has been deducted.'],
             [/^Kartu (.*) sekarang digunakan\.$/, 'The $1 card is now in use.'],
             [/^Transfer (.*) ke kartu (.*) berhasil\.$/, 'Transfer of $1 to card $2 was successful.'],
             [/^Kode OTP dikirim ke (.*)\.$/, 'OTP code sent to $1.'], [/^Mode demo: kode OTP Anda (.*)\.$/, 'Demo mode: your OTP code is $1.'],
@@ -2995,6 +3028,9 @@ const BCC_CONFIG = {
     // Pola umum bank: kartu lebih tinggi butuh kartu sebelumnya + penghasilan/saldo lebih besar + riwayat transaksi aktif.
     const GOLD_REQ = { income: 10000000, balance: 2000000 };
     const PLAT_REQ = { income: 50000000, balance: 10000000, tx: 15 };       // + wajib sudah punya kartu Gold
+    // Biaya bulanan & limit transfer per hari (acuan BCA Paspor Blue/Gold/Platinum).
+    // Mode Supabase: nilai diambil dari tabel card_plans (ubah di sana). Dasar tagihan & limit = kartu TERTINGGI yang dimiliki.
+    const PLANS = { silver: { fee: 15000, limit: 100000000 }, gold: { fee: 17000, limit: 125000000 }, platinum: { fee: 20000, limit: 150000000 } };
     const ORDER = ['silver', 'gold', 'platinum'];
     const TIERS = {
         silver:   { label: 'SILVER',   name: 'Silver',   prefix: '4', cls: 'metal-card' },
@@ -3079,6 +3115,8 @@ const BCC_CONFIG = {
                 }
             }
             cards = {}; (data || []).forEach(c => { cards[c.tier] = { n: c.card_number, e: c.expiry }; });
+            const pl = await sb.from('card_plans').select('tier,monthly_fee,daily_transfer_limit');
+            if (!pl.error) (pl.data || []).forEach(p => { if (PLANS[p.tier]) PLANS[p.tier] = { fee: Number(p.monthly_fee), limit: Number(p.daily_transfer_limit) }; });
             if (!cards.silver) throw new Error('no silver');
         } catch (e) { console.error('[BCC] kartu:', e); showMessage('Gagal memuat kartu dari database.'); }
     }
@@ -3095,6 +3133,28 @@ const BCC_CONFIG = {
         const box = readJson(INBOX_KEY); let got = false;
         ownNumbers().forEach(n => { (box[n] || []).forEach(t => BCC.add(t)); if (box[n]) { delete box[n]; got = true; } });
         if (got) writeJson(INBOX_KEY, box);
+    };
+
+    // ---------- Limit transfer harian & biaya bulanan ----------
+    const topTier = () => ORDER.filter(t => cards[t]).pop() || 'silver';
+    const sameDay = (a, b) => a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
+    const usedToday = () => ((window.BCC && BCC.data()) || []).filter(t => t.type === 'out' && t.category === 'Transfers' && sameDay(t.at, new Date())).reduce((s, t) => s + t.amount, 0);
+    const limitLeft = () => Math.max(0, PLANS[topTier()].limit - usedToday());
+    window.BCC_chargeFee = async function () {
+        const tier = topTier(), fee = PLANS[tier].fee;
+        try {
+            if (sbOn()) {
+                const { data, error } = await (await getSb()).rpc('charge_monthly_fee');
+                if (error) throw error;
+                if (Number(data) > 0) { await BCC.sync(); showMessage('Biaya administrasi bulanan ' + fmtMoney(Number(data)) + ' telah dipotong.'); }
+                return;
+            }
+            const now = new Date();
+            const done = (BCC.data() || []).some(t => t.category === 'Fees' && t.at.getFullYear() === now.getFullYear() && t.at.getMonth() === now.getMonth());
+            if (done || BCC.balance() < fee) return;                  // sekali per bulan, hanya jika saldo cukup
+            await BCC.add({ type: 'out', amount: fee, category: 'Fees', title: 'Biaya administrasi bulanan (' + TIERS[tier].name + ')' });
+            showMessage('Biaya administrasi bulanan ' + fmtMoney(fee) + ' telah dipotong.');
+        } catch (e) { console.error('[BCC] biaya bulanan:', e); }
     };
 
     // ---------- Syarat kartu ----------
@@ -3194,7 +3254,8 @@ const BCC_CONFIG = {
                 btn = `<button id="cc-btn-${tier}" type="button" class="cc-btn" onclick="BCC_claimCard('${tier}')" ${ok ? '' : 'disabled'}>${ok ? 'Claim ' + TIERS[tier].name + ' Card' : 'Locked'}</button>`;
             } else btn = `<button type="button" class="cc-btn" onclick="BCC_useCard('${tier}')" ${isActive ? 'disabled' : ''}>${isActive ? 'In use' : 'Use this card'}</button>`;
             return `<div class="cc-item">${cardHTML(tier, own && own.n, own && own.e, locked)}
-                <div><p class="cc-name">${TIERS[tier].name} ${badge}</p><p class="cc-desc">${DESC[tier]}</p></div>${extra}${btn}</div>`;
+                <div><p class="cc-name">${TIERS[tier].name} ${badge}</p><p class="cc-desc">${DESC[tier]}</p></div>
+                <ul class="cc-plan"><li><span>Monthly fee</span><b>${fmtMoney(PLANS[tier].fee)}</b></li><li><span>Daily transfer limit</span><b>${fmtMoney(PLANS[tier].limit)}</b></li></ul>${extra}${btn}</div>`;
         };
         body.innerHTML = ORDER.map(item).join('');
     }
@@ -3256,13 +3317,14 @@ const BCC_CONFIG = {
         amount = Math.round(Number(amount));
         if (!(amount > 0)) throw new Error('Nominal harus lebih dari 0.');
         if (amount > BCC.balance()) throw new Error('Saldo tidak cukup.');
+        if (amount > limitLeft()) throw new Error('Melebihi limit transfer harian. Sisa limit hari ini ' + fmtMoney(limitLeft()) + '.');
         note = String(note || '').trim().slice(0, 60);
         const from = numberOf();
         if (sbOn()) {
             const { error } = await (await getSb()).rpc('transfer_funds', { p_to_card: dest, p_amount: amount, p_note: note || null });
             if (error) {
                 const m = String(error.message);
-                throw new Error(/not found/i.test(m) ? 'Kartu tujuan tidak ditemukan.' : /own card/i.test(m) ? 'Tidak bisa transfer ke kartu sendiri.'
+                throw new Error(/limit/i.test(m) ? 'Melebihi limit transfer harian.' : /not found/i.test(m) ? 'Kartu tujuan tidak ditemukan.' : /own card/i.test(m) ? 'Tidak bisa transfer ke kartu sendiri.'
                               : /insufficient/i.test(m) ? 'Saldo tidak cukup.' : 'Transfer gagal. Coba lagi.');
             }
             await BCC.sync();
@@ -3280,6 +3342,7 @@ const BCC_CONFIG = {
         if (!numberOf()) { showMessage('Kartu belum siap. Coba lagi sebentar.'); return; }
         $('tf-form').reset(); $('tf-error').textContent = '';
         $('tf-balance').textContent = fmtMoney(BCC.balance());
+        $('tf-limit').textContent = fmtMoney(limitLeft()) + ' / ' + fmtMoney(PLANS[topTier()].limit);
         $('tf-modal').classList.remove('hidden'); $('tf-card').focus();
     };
     window.closeTransfer = function () { $('tf-modal').classList.add('hidden'); };
