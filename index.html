@@ -622,6 +622,55 @@ html.cards-anim, html.cards-anim body { overflow-x: hidden; }
 .cc-plan { margin: 0; padding: 10px 12px; list-style: none; border-radius: 10px; background: #fff; display: flex; flex-direction: column; gap: 6px; }
 .cc-plan li { display: flex; justify-content: space-between; gap: 8px; font-size: 11px; color: #7a7f8e; }
 .cc-plan b { color: #11131a; font-weight: 700; }
+
+/* ===== More: menu, pajak, emas & crypto ===== */
+.mo-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 14px; }
+.mo-tile { position: relative; display: flex; flex-direction: column; align-items: flex-start; gap: 6px; padding: 18px; text-align: left; border: 1.5px solid #e6e7ec; border-radius: 18px; background: #fff; cursor: pointer; transition: transform .2s, border-color .2s, box-shadow .2s; }
+.mo-tile:hover:not(:disabled) { transform: translateY(-2px); border-color: #0f1c33; box-shadow: 0 10px 24px -14px rgba(15,28,51,.5); }
+.mo-tile.soon { cursor: not-allowed; opacity: .7; }
+.mo-ic { width: 44px; height: 44px; border-radius: 12px; background: #0f1c33; color: #fff; display: flex; align-items: center; justify-content: center; margin-bottom: 4px; }
+.mo-ic svg { width: 22px; height: 22px; }
+.mo-name { font-size: 14px; font-weight: 700; color: #11131a; }
+.mo-desc { font-size: 11.5px; color: #7a7f8e; line-height: 1.4; }
+.mo-badge { position: absolute; top: 14px; right: 14px; padding: 2px 9px; border-radius: 999px; background: #e6e7ec; color: #44506a; font-size: 10px; font-weight: 700; }
+.mo-list { display: flex; flex-direction: column; gap: 10px; }
+.mo-opt { display: flex; align-items: center; gap: 12px; padding: 14px 16px; border: 1.5px solid #e6e7ec; border-radius: 14px; background: #fff; font-size: 13px; font-weight: 600; color: #11131a; cursor: pointer; text-align: left; transition: border-color .2s; }
+.mo-opt:hover { border-color: #b9bcc9; } .mo-opt.on { border-color: #0f1c33; box-shadow: 0 0 0 3px rgba(15,28,51,.1); }
+.mo-radio { width: 18px; height: 18px; border-radius: 50%; border: 2px solid #c9cbd6; flex: none; }
+.mo-opt.on .mo-radio { border: 5px solid #0f1c33; }
+.mo-note { margin: 12px 2px 0; font-size: 11.5px; line-height: 1.5; color: #7a7f8e; }
+.mk-bar { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; padding: 14px; border-radius: 14px; background: #fff; margin-bottom: 14px; }
+.mk-l { margin: 0 0 3px; font-size: 10.5px; color: #7a7f8e; font-weight: 600; }
+.mk-v { margin: 0; font-size: 13px; font-weight: 700; color: #11131a; word-break: break-word; }
+.up { color: #16a34a !important; } .dn { color: #dc2626 !important; }
+.mk-list { display: flex; flex-direction: column; gap: 8px; }
+.mk-row { display: grid; grid-template-columns: 1.1fr .8fr 1.2fr; align-items: center; gap: 12px; padding: 13px 14px; border: 1.5px solid #e6e7ec; border-radius: 14px; background: #fff; cursor: pointer; text-align: left; position: relative; transition: border-color .2s; }
+.mk-row:hover { border-color: #0f1c33; }
+.mk-name b { display: block; font-size: 13px; color: #11131a; } .mk-name small { color: #7a7f8e; font-size: 11px; }
+.mk-px { text-align: right; } .mk-px b { display: block; font-size: 13px; color: #11131a; }
+.mk-chg { font-size: 11px; font-weight: 700; } .mk-chg.up { color: #16a34a; } .mk-chg.dn { color: #dc2626; }
+.mk-hold { grid-column: 1 / -1; font-size: 11px; color: #7a7f8e; border-top: 1px dashed #e6e7ec; padding-top: 6px; }
+.mk-spark { width: 100%; height: 28px; }
+.mk-detail { background: #fff; border-radius: 16px; padding: 18px; display: flex; flex-direction: column; gap: 10px; }
+.mk-top { display: flex; justify-content: space-between; align-items: flex-end; }
+.mk-big { margin: 0; font-size: 24px; font-weight: 800; color: #11131a; letter-spacing: -.01em; }
+.mk-sparkbig .mk-spark { height: 56px; }
+.mk-pos { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 12px; border-radius: 12px; background: #f4f5f7; }
+.mk-seg { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; padding: 4px; border-radius: 12px; background: #f1f2f6; }
+.mk-seg button { padding: 9px; border: 0; border-radius: 9px; background: transparent; font-size: 12.5px; font-weight: 700; color: #7a7f8e; cursor: pointer; }
+.mk-seg button.on { background: #0f1c33; color: #fff; }
+.mk-inp { width: 100%; padding: 12px 14px; border: 1.5px solid #e6e7ec; border-radius: 12px; font-size: 14px; background: #f8f9fa; outline: none; }
+.mk-inp:focus { border-color: #0f1c33; background: #fff; }
+.mk-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.mk-chips button { padding: 6px 12px; border: 1.5px solid #e6e7ec; border-radius: 999px; background: #fff; font-size: 11.5px; font-weight: 600; color: #44506a; cursor: pointer; }
+.mk-chips button:hover { border-color: #0f1c33; }
+.mk-btn { width: 100%; padding: 13px; border: 0; border-radius: 12px; background: #0f1c33; color: #fff; font-size: 13.5px; font-weight: 700; cursor: pointer; }
+.mk-btn:disabled { background: #e6e7ec; color: #9aa0ae; cursor: not-allowed; }
+.mk-err { margin: 0; min-height: 16px; font-size: 11.5px; color: #dc2626; }
+.mk-reset { margin-top: 12px; padding: 8px 14px; border: 1.5px solid #e6e7ec; border-radius: 10px; background: #fff; font-size: 11.5px; font-weight: 600; color: #7a7f8e; cursor: pointer; }
+.mk-reset:hover { color: #dc2626; border-color: #dc2626; }
+.mo-receipt { align-items: stretch; }
+.mo-check { width: 52px; height: 52px; margin: 0 auto; border-radius: 50%; background: #16a34a; color: #fff; font-size: 26px; display: flex; align-items: center; justify-content: center; animation: otpPop .35s ease-out; }
     </style>
 </head>
 <body class="min-h-screen flex items-center justify-center p-4 sm:p-8 text-neutral-900 antialiased">
@@ -1231,14 +1280,14 @@ html.cards-anim, html.cards-anim body { overflow-x: hidden; }
         <!-- ===== TAB SAVINGS: hanya kartu saving + tombol tambah ===== -->
         <div id="more-view" class="hidden lg:col-span-9">
             <div class="bg-[#f8f9fa] rounded-2xl p-6 min-h-[420px] flex flex-col">
-                <div class="mb-6">
-                    <h2 class="text-lg font-bold text-neutral-950">More</h2>
-                    <p class="text-xs text-neutral-400 mt-0.5">Fitur tambahan Bank Central Capital</p>
+                <div class="mb-5 flex items-center gap-3">
+                    <button type="button" id="more-back" class="hidden w-9 h-9 rounded-xl bg-white hover:bg-slate-100 text-neutral-600 cursor-pointer shadow-2xs" aria-label="Back">←</button>
+                    <div>
+                        <h2 id="more-title" class="text-lg font-bold text-neutral-950">More</h2>
+                        <p id="more-sub" class="text-xs text-neutral-400 mt-0.5">Fitur tambahan Bank Central Capital</p>
+                    </div>
                 </div>
-                <div class="flex-1 flex flex-col items-center justify-center text-center gap-3 text-neutral-400">
-                    <svg class="w-10 h-10" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
-                    <p class="text-sm">Segera hadir</p>
-                </div>
+                <div id="more-body" class="flex-1"></div>
             </div>
         </div>
 
@@ -2581,6 +2630,40 @@ Premium card for active customers.|Kartu premium untuk nasabah aktif.|||||
 Top-tier card for long-standing customers.|Kartu tingkat tertinggi untuk nasabah setia.|||||
 Own a Gold card|Memiliki kartu Gold|||||
 Minimum transactions|Jumlah transaksi minimal|||||
+Pay taxes from your balance|Bayar pajak dari saldo Anda|||||
+Tax object number / billing code|Nomor objek pajak / kode billing|||||
+Payment successful|Pembayaran berhasil|||||
+Receipt number|Nomor bukti bayar|||||
+Tax|Jenis pajak|||||
+Pay|Bayar|||||
+Done|Selesai|||||
+Date|Tanggal|||||
+Coming soon|Segera hadir|Próximamente|Bientôt disponible|Demnächst verfügbar|即将推出|近日公開
+Pay Tax|Bayar Pajak|Pagar impuestos|Payer les impôts|Steuern zahlen|缴纳税款|税金を支払う
+Gold|Emas|Oro|Or|Gold|黄金|ゴールド
+Crypto|Crypto|Cripto|Crypto|Krypto|加密货币|暗号資産
+Promo Code|Kode Promo|Código promocional|Code promo|Promocode|优惠码|プロモコード
+Choose the tax you want to pay|Pilih pajak yang ingin dibayar|||||
+Live gold price, simulated trading|Harga emas langsung, trading simulasi|||||
+Live crypto prices, simulated trading|Harga crypto langsung, trading simulasi|||||
+Live gold price (per gram), simulated trading|Harga emas langsung (per gram), trading simulasi|||||
+Discounts for your transactions|Diskon untuk transaksimu|||||
+Property tax (PBB)|Pajak Bumi dan Bangunan (PBB)|||||
+Vehicle tax (PKB)|Pajak Kendaraan Bermotor (PKB)|||||
+Income tax (PPh)|Pajak Penghasilan (PPh)|||||
+Land & building transfer tax (BPHTB)|Bea Perolehan Hak atas Tanah dan Bangunan (BPHTB)|||||
+Other regional taxes|Pajak daerah lainnya|||||
+Simulation funds|Dana simulasi|||||
+Holdings|Aset dimiliki|||||
+Profit / Loss|Untung / Rugi|||||
+Reset simulation|Reset simulasi|||||
+Price|Harga|||||
+Price per gram|Harga per gram|||||
+Owned|Dimiliki|||||
+Value|Nilai|||||
+Buy|Beli|||||
+Sell|Jual|||||
+Back|Kembali|||||
 Transfer limit left today|Sisa limit transfer hari ini|||||
 Monthly fee|Biaya bulanan|||||
 Daily transfer limit|Limit transfer per hari|||||
@@ -2669,6 +2752,13 @@ Offers & promotions|Penawaran & promosi|Ofertas y promociones|Offres et promotio
         const EN_IDX = {}; ROWS.forEach(r => EN_IDX[r[0]] = r);
         // Sumber berbahasa Indonesia -> Inggris
         const ID2EN = {
+            'Nomor objek pajak / kode billing tidak valid.': 'The tax object number / billing code is invalid.', 'Nominal minimal Rp 1.000.': 'The minimum amount is Rp 1.000.',
+            'Pembayaran gagal. Coba lagi.': 'Payment failed. Please try again.', 'Transaksi gagal. Coba lagi.': 'Transaction failed. Please try again.',
+            'Simulasi: tidak ada transaksi sungguhan. Harga beli dan jual sama (tanpa selisih/biaya).': 'Simulation: no real transactions. Buy and sell prices are the same (no spread or fees).',
+            'Harga belum tersedia. Coba lagi sebentar.': 'Price not available yet. Try again shortly.', 'Memuat harga…': 'Loading prices…',
+            'Gagal memuat harga. Menampilkan harga terakhir yang tersimpan.': 'Could not load prices. Showing the last saved prices.',
+            'Dana simulasi tidak cukup.': 'Not enough simulation funds.', 'Nominal melebihi aset yang dimiliki.': 'Amount exceeds the asset you own.',
+            'Harga belum tersedia.': 'Price not available.', 'Masukkan nominal lebih dari 0.': 'Enter an amount greater than 0.',
             'Melebihi limit transfer harian.': 'Daily transfer limit exceeded.', 'Segera hadir': 'Coming soon', 'Fitur tambahan Bank Central Capital': 'Additional Bank Central Capital features',
             'Selamat! Kartu Platinum berhasil didapatkan.': 'Congratulations! Your Platinum card is ready.', 'Syarat Kartu Platinum belum terpenuhi.': 'The Platinum card requirements have not been met yet.',
             'Gagal mengklaim kartu Platinum.': 'Failed to claim the Platinum card.',
@@ -2716,6 +2806,9 @@ Offers & promotions|Penawaran & promosi|Ofertas y promociones|Offres et promotio
             'Permintaan upgrade ke Robin Black Metal Card dikirim.': 'Your upgrade request for the Robin Black Metal Card was sent.'
         };
         const ID_RX = [
+            [/^Pajak (.*) sebesar (.*) berhasil dibayar\.$/, '$1 tax payment of $2 was successful.'],
+            [/^Simulasi: membeli (.*) seharga (.*)\.$/, 'Simulation: bought $1 for $2.'], [/^Simulasi: menjual (.*) seharga (.*)\.$/, 'Simulation: sold $1 for $2.'],
+            [/^Harga langsung dari pasar • diperbarui (.*)$/, 'Live market price • updated $1'],
             [/^Melebihi limit transfer harian\. Sisa limit hari ini (.*)\.$/, 'Daily transfer limit exceeded. Remaining limit today: $1.'],
             [/^Biaya administrasi bulanan (.*) telah dipotong\.$/, 'The monthly admin fee of $1 has been deducted.'],
             [/^Kartu (.*) sekarang digunakan\.$/, 'The $1 card is now in use.'],
@@ -3159,7 +3252,7 @@ const BCC_CONFIG = {
 
     // ---------- Syarat kartu ----------
     function stats() {
-        const d = (window.BCC && BCC.data()) || [];
+        const d = ((window.BCC && BCC.data()) || []).filter(t => t.category !== 'Investments');   // beli/jual emas & crypto tidak dihitung
         return { income: d.filter(t => t.type === 'in').reduce((s, t) => s + t.amount, 0), balance: window.BCC ? BCC.balance() : 0, count: d.length };
     }
     // Daftar syarat per kartu: money / count / bool
@@ -3254,7 +3347,7 @@ const BCC_CONFIG = {
                 btn = `<button id="cc-btn-${tier}" type="button" class="cc-btn" onclick="BCC_claimCard('${tier}')" ${ok ? '' : 'disabled'}>${ok ? 'Claim ' + TIERS[tier].name + ' Card' : 'Locked'}</button>`;
             } else btn = `<button type="button" class="cc-btn" onclick="BCC_useCard('${tier}')" ${isActive ? 'disabled' : ''}>${isActive ? 'In use' : 'Use this card'}</button>`;
             return `<div class="cc-item">${cardHTML(tier, own && own.n, own && own.e, locked)}
-                <div><p class="cc-name">${TIERS[tier].name} ${badge}</p><p class="cc-desc">${DESC[tier]}</p></div>
+                <div><p class="cc-name"><span data-no-i18n>${TIERS[tier].name}</span> ${badge}</p><p class="cc-desc">${DESC[tier]}</p></div>
                 <ul class="cc-plan"><li><span>Monthly fee</span><b>${fmtMoney(PLANS[tier].fee)}</b></li><li><span>Daily transfer limit</span><b>${fmtMoney(PLANS[tier].limit)}</b></li></ul>${extra}${btn}</div>`;
         };
         body.innerHTML = ORDER.map(item).join('');
@@ -3376,6 +3469,286 @@ const BCC_CONFIG = {
         document.documentElement.addEventListener('mouseleave', () => { reset(cur); cur = null; });
     }
     render();
+})();
+</script>
+<script>
+/* =====================================================================
+   MORE: Bayar Pajak (memotong saldo), Emas & Crypto (harga asli, beli/jual simulasi
+   yang memotong/menambah saldo), Kode Promo (segera hadir)
+   ===================================================================== */
+(function () {
+    const $ = id => document.getElementById(id);
+    const body = $('more-body'), title = $('more-title'), sub = $('more-sub'), back = $('more-back');
+    const HOLD_KEY = 'bcc_hold_v1', PRICE_KEY = 'bcc_prices_v1';
+    const CG = 'https://api.coingecko.com/api/v3/simple/price';                // dipakai hanya di mode lokal (tanpa Supabase)
+    const OZ = 31.1034768, STALE_MS = 15 * 60000;
+    const MARKETS = [
+        { id: 'gold', cg: 'pax-gold',    name: 'Gold',     sym: 'GOLD', unit: 'gram', group: 'gold' },
+        { id: 'btc',  cg: 'bitcoin',     name: 'Bitcoin',  sym: 'BTC',  unit: 'BTC',  group: 'crypto' },
+        { id: 'eth',  cg: 'ethereum',    name: 'Ethereum', sym: 'ETH',  unit: 'ETH',  group: 'crypto' },
+        { id: 'sol',  cg: 'solana',      name: 'Solana',   sym: 'SOL',  unit: 'SOL',  group: 'crypto' },
+        { id: 'bnb',  cg: 'binancecoin', name: 'BNB',      sym: 'BNB',  unit: 'BNB',  group: 'crypto' },
+        { id: 'xrp',  cg: 'ripple',      name: 'XRP',      sym: 'XRP',  unit: 'XRP',  group: 'crypto' }
+    ];
+    const TAXES = [{ k: 'pbb', l: 'Property tax (PBB)' }, { k: 'pkb', l: 'Vehicle tax (PKB)' }, { k: 'pph', l: 'Income tax (PPh)' },
+                   { k: 'bphtb', l: 'Land & building transfer tax (BPHTB)' }, { k: 'other', l: 'Other regional taxes' }];
+    const TAX_SHORT = { pbb: 'PBB', pkb: 'PKB', pph: 'PPh', bphtb: 'BPHTB', other: 'Pajak daerah' };
+    const mk = id => MARKETS.find(m => m.id === id);
+    const idr = n => fmtMoney(Math.round(n));
+    const qtyFmt = q => Number(q).toLocaleString('id-ID', { maximumFractionDigits: 8 });
+    const sbMode = () => typeof sbOn === 'function' && sbOn();
+    const email = () => ((typeof seState !== 'undefined' && seState.profile && seState.profile.email) || 'guest').toLowerCase();
+    const balance = () => (window.BCC ? BCC.balance() : 0);
+
+    // ---------- Aset yang dimiliki ----------
+    let HOLD = {};
+    const readLocal = () => { try { return JSON.parse(localStorage.getItem(HOLD_KEY) || '{}'); } catch (e) { return {}; } };
+    const saveLocal = h => { try { const a = readLocal(); a[email()] = h; localStorage.setItem(HOLD_KEY, JSON.stringify(a)); } catch (e) {} };
+    async function loadHold() {
+        if (sbMode()) {
+            try {
+                const { data, error } = await (await getSb()).from('holdings').select('asset,qty,cost');
+                if (error) throw error;
+                HOLD = {}; (data || []).forEach(r => { HOLD[r.asset] = { qty: Number(r.qty), cost: Number(r.cost) }; });
+            } catch (e) { console.error('[BCC] aset:', e); }
+        } else HOLD = readLocal()[email()] || {};
+    }
+
+    // ---------- Harga asli ----------
+    // Mode Supabase: dibaca dari tabel market_prices (diisi server Railway) = harga yang sama dipakai server saat transaksi.
+    // Mode lokal: langsung dari CoinGecko.
+    let prices = {}, hist = {}, status = 'idle', timer = null, lastFetch = 0;
+    try { prices = JSON.parse(localStorage.getItem(PRICE_KEY) || '{}'); } catch (e) {}
+    const priceOf = id => prices[id] && prices[id].price;
+    const fresh = id => prices[id] && Date.now() - prices[id].t < STALE_MS;
+    function setPrice(id, price, chg, t) {
+        prices[id] = { price, chg, t };
+        const h = (hist[id] = hist[id] || []);
+        if (h[h.length - 1] !== price) { h.push(price); if (h.length > 40) h.shift(); }
+    }
+    async function fetchPrices() {
+        lastFetch = Date.now();
+        try {
+            if (sbMode()) {
+                const { data, error } = await (await getSb()).from('market_prices').select('asset,price_idr,change_24h,updated_at');
+                if (error) throw error;
+                (data || []).forEach(r => setPrice(r.asset, Number(r.price_idr), r.change_24h == null ? null : Number(r.change_24h), Date.parse(r.updated_at)));
+            } else {
+                const r = await fetch(CG + '?ids=' + MARKETS.map(m => m.cg).join(',') + '&vs_currencies=idr&include_24hr_change=true', { cache: 'no-store' });
+                if (!r.ok) throw new Error('HTTP ' + r.status);
+                const d = await r.json();
+                MARKETS.forEach(m => { const x = d[m.cg]; if (x && x.idr) setPrice(m.id, m.id === 'gold' ? x.idr / OZ : x.idr, x.idr_24h_change, Date.now()); });
+            }
+            try { localStorage.setItem(PRICE_KEY, JSON.stringify(prices)); } catch (e) {}
+            status = 'ok';
+        } catch (e) { console.error('[BCC] harga:', e); status = 'error'; }
+        refreshLive();
+    }
+    function startPoll() { stopPoll(); if (Date.now() - lastFetch > 8000) fetchPrices(); timer = setInterval(fetchPrices, sbMode() ? 15000 : 60000); }
+    function stopPoll() { if (timer) clearInterval(timer); timer = null; }
+
+    // ---------- Tampilan ----------
+    let screen = 'home', asset = null, side = 'buy', taxSel = null, receipt = null, visible = false;
+    const ICON = {
+        tax:   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9 8h6M9 12h6"/></svg>',
+        gold:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18l3-7h12l3 7z"/><path d="M8 11l1.5-4h5L16 11"/></svg>',
+        crypto:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.5 7.5v9M9.5 7.5h3.2a2 2 0 0 1 0 4H9.5m3.4 0a2.2 2.2 0 0 1 0 4.5H9.5M11 6v1.5M11 16.5V18"/></svg>',
+        promo: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.6 13.4l-7.2 7.2a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8z"/><circle cx="7.5" cy="7.5" r="1.5"/></svg>'
+    };
+    const spark = id => {
+        const h = hist[id]; if (!h || h.length < 2) return '';
+        const mn = Math.min(...h), mx = Math.max(...h), rg = mx - mn || 1;
+        const pts = h.map((v, i) => (i / (h.length - 1) * 100).toFixed(1) + ',' + (26 - (v - mn) / rg * 24).toFixed(1)).join(' ');
+        return `<svg viewBox="0 0 100 28" preserveAspectRatio="none" class="mk-spark"><polyline points="${pts}" fill="none" stroke="${h[h.length - 1] >= h[0] ? '#16a34a' : '#dc2626'}" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/></svg>`;
+    };
+    const chgHTML = id => {
+        const c = prices[id] && prices[id].chg; if (c == null) return '<span class="mk-chg">—</span>';
+        return `<span class="mk-chg ${c >= 0 ? 'up' : 'dn'}">${c >= 0 ? '▲' : '▼'} ${Math.abs(c).toFixed(2)}%</span>`;
+    };
+    const holdValue = id => { const p = HOLD[id], pr = priceOf(id); return p && pr ? p.qty * pr : 0; };
+    const statusText = () => status === 'error' ? 'Gagal memuat harga. Menampilkan harga terakhir yang tersimpan.' : status === 'ok' ? 'Harga langsung dari pasar • diperbarui ' + new Date().toLocaleTimeString('id-ID') : 'Memuat harga…';
+    function setHead(t, s, canBack) { title.textContent = t; sub.textContent = s; back.classList.toggle('hidden', !canBack); }
+
+    function home() {
+        setHead('More', 'Fitur tambahan Bank Central Capital', false);
+        const tile = (key, ic, name, desc, soon) => `<button type="button" class="mo-tile${soon ? ' soon' : ''}" ${soon ? 'disabled aria-disabled="true"' : `onclick="MORE.go('${key}')"`}>
+            <span class="mo-ic">${ICON[ic]}</span><span class="mo-name">${name}</span><span class="mo-desc">${desc}</span>${soon ? '<span class="mo-badge">Coming soon</span>' : ''}</button>`;
+        body.innerHTML = `<div class="mo-grid">
+            ${tile('tax', 'tax', 'Pay Tax', 'Pay taxes from your balance', false)}
+            ${tile('gold', 'gold', 'Gold', 'Live gold price, simulated trading', false)}
+            ${tile('crypto', 'crypto', 'Crypto', 'Live crypto prices, simulated trading', false)}
+            ${tile('promo', 'promo', 'Promo Code', 'Discounts for your transactions', true)}</div>`;
+    }
+    function tax() {
+        setHead('Pay Tax', 'Choose the tax you want to pay', true);
+        const form = taxSel == null ? '' : `<div class="mk-detail" style="margin-top:14px">
+            <div><p class="mk-l">Balance</p><p class="mk-v">${idr(balance())}</p></div>
+            <label class="mk-l" for="tx-obj">Tax object number / billing code</label>
+            <input id="tx-obj" type="text" maxlength="30" autocomplete="off" class="mk-inp">
+            <label class="mk-l" for="tx-amt">Amount (Rp)</label>
+            <input id="tx-amt" type="number" inputmode="numeric" min="1000" step="1" placeholder="0" class="mk-inp">
+            <p class="mk-err" id="tx-err" role="alert"></p>
+            <button type="button" id="tx-go" class="mk-btn" onclick="MORE.payTax()">Pay</button></div>`;
+        body.innerHTML = `<div class="mo-list">${TAXES.map((t, i) => `<button type="button" class="mo-opt${taxSel === i ? ' on' : ''}" role="radio" aria-checked="${taxSel === i}" onclick="MORE.pickTax(${i})">
+            <span class="mo-radio"></span><span>${t.l}</span></button>`).join('')}</div>${form}`;
+    }
+    function taxDone() {
+        setHead('Pay Tax', 'Payment successful', false);
+        body.innerHTML = `<div class="mk-detail mo-receipt"><div class="mo-check">✓</div>
+            <p class="mk-big" style="text-align:center">${idr(receipt.amount)}</p><p class="mo-note" style="text-align:center;margin-top:-4px">Payment successful</p>
+            <div class="mk-pos" style="grid-template-columns:1fr">
+              <div><p class="mk-l">Tax</p><p class="mk-v">${receipt.label}</p></div>
+              <div><p class="mk-l">Tax object number / billing code</p><p class="mk-v">${receipt.obj.replace(/[<>&]/g, '')}</p></div>
+              <div><p class="mk-l">Receipt number</p><p class="mk-v" style="font-family:'DM Mono',monospace">${receipt.rc}</p></div>
+              <div><p class="mk-l">Date</p><p class="mk-v">${receipt.at.toLocaleString('id-ID')}</p></div></div>
+            <button type="button" class="mk-btn" onclick="MORE.go('home')">Done</button></div>`;
+    }
+    function bar() {
+        let total = 0, cost = 0;
+        MARKETS.forEach(m => { total += holdValue(m.id); if (HOLD[m.id]) cost += HOLD[m.id].cost; });
+        const pl = total - cost;
+        return `<div class="mk-bar"><div><p class="mk-l">Balance</p><p class="mk-v" id="mk-cash">${idr(balance())}</p></div>
+            <div><p class="mk-l">Holdings</p><p class="mk-v" id="mk-total">${idr(total)}</p></div>
+            <div><p class="mk-l">Profit / Loss</p><p class="mk-v ${pl >= 0 ? 'up' : 'dn'}" id="mk-pl">${pl >= 0 ? '+' : '-'} ${idr(Math.abs(pl))}</p></div></div>`;
+    }
+    function market(group) {
+        setHead(group === 'gold' ? 'Gold' : 'Crypto', group === 'gold' ? 'Live gold price (per gram), simulated trading' : 'Live crypto prices, simulated trading', true);
+        const rows = MARKETS.filter(m => m.group === group).map(m => {
+            const p = priceOf(m.id), hv = holdValue(m.id);
+            return `<button type="button" class="mk-row" onclick="MORE.open('${m.id}')">
+                <div class="mk-name"><b>${m.name}</b><small>${m.sym}${m.id === 'gold' ? ' / gram' : ''}</small></div>${spark(m.id) || '<span></span>'}
+                <div class="mk-px"><b>${p ? idr(p) : '—'}</b>${chgHTML(m.id)}</div>
+                ${hv ? `<div class="mk-hold">${qtyFmt(HOLD[m.id].qty)} ${m.unit} ≈ ${idr(hv)}</div>` : ''}</button>`;
+        }).join('');
+        body.innerHTML = bar() + `<div class="mk-list">${rows}</div>
+            <p class="mo-note" id="mk-status">${statusText()}</p>
+            <p class="mo-note">Simulasi: tidak ada transaksi sungguhan. Harga beli dan jual sama (tanpa selisih/biaya).${group === 'gold' ? ' Harga emas memakai PAX Gold (PAXG) sebagai acuan harga emas dunia.' : ''}</p>`;
+    }
+    function detail(id) {
+        const m = mk(id); setHead(m.name, m.id === 'gold' ? 'Price per gram' : 'Price per ' + m.sym, true);
+        const p = HOLD[id], pr = priceOf(id), can = pr && fresh(id);
+        body.innerHTML = bar() + `<div class="mk-detail">
+            <div class="mk-top"><div><p class="mk-l">Price</p><p class="mk-big" id="mk-price">${pr ? idr(pr) : '—'}</p></div><div id="mk-chgbox">${chgHTML(id)}</div></div>
+            <div id="mk-sparkbox" class="mk-sparkbig">${spark(id)}</div>
+            <div class="mk-pos"><div><p class="mk-l">Owned</p><p class="mk-v" id="mk-qty">${p ? qtyFmt(p.qty) : '0'} ${m.unit}</p></div>
+                <div><p class="mk-l">Value</p><p class="mk-v" id="mk-val">${idr(holdValue(id))}</p></div></div>
+            <div class="mk-seg"><button type="button" id="seg-buy" class="${side === 'buy' ? 'on' : ''}" onclick="MORE.side('buy')">Buy</button><button type="button" id="seg-sell" class="${side === 'sell' ? 'on' : ''}" onclick="MORE.side('sell')">Sell</button></div>
+            <label class="mk-l" for="mk-amt">Amount (Rp)</label>
+            <input id="mk-amt" type="number" inputmode="numeric" min="1" step="1" placeholder="0" class="mk-inp" oninput="MORE.preview()">
+            <div class="mk-chips" id="mk-chips"></div>
+            <p class="mo-note" id="mk-prev"></p><p class="mk-err" id="mk-err" role="alert"></p>
+            <button type="button" id="mk-go" class="mk-btn" onclick="MORE.trade()" ${can ? '' : 'disabled'}>${side === 'buy' ? 'Buy' : 'Sell'}</button>
+            <p class="mo-note" id="mk-status">${can ? statusText() : 'Harga belum tersedia. Coba lagi sebentar.'}</p></div>`;
+        chips(); preview();
+    }
+    function chips() {
+        const el = $('mk-chips'); if (!el) return;
+        const hv = holdValue(asset);
+        const list = side === 'buy' ? [[1000000, '1 jt'], [5000000, '5 jt'], [10000000, '10 jt'], [balance(), 'Max']] : [[hv * .25, '25%'], [hv * .5, '50%'], [hv, '100%']];
+        el.innerHTML = list.map(([v, l]) => `<button type="button" onclick="MORE.fill(${Math.floor(v)})">${l}</button>`).join('');
+    }
+    function preview() {
+        if (!$('mk-prev')) return;
+        const a = Number($('mk-amt').value) || 0, pr = priceOf(asset), m = mk(asset);
+        $('mk-prev').textContent = a > 0 && pr ? (side === 'buy' ? 'You get about ' : 'You sell about ') + qtyFmt(a / pr) + ' ' + m.unit : '';
+        $('mk-err').textContent = '';
+    }
+    function refreshLive() {
+        if (!visible) return;
+        if (screen === 'gold' || screen === 'crypto') { market(screen); return; }
+        if (screen === 'detail' && asset) {
+            const p = HOLD[asset], pr = priceOf(asset), m = mk(asset), can = pr && fresh(asset);
+            if ($('mk-price')) $('mk-price').textContent = pr ? idr(pr) : '—';
+            if ($('mk-chgbox')) $('mk-chgbox').innerHTML = chgHTML(asset);
+            if ($('mk-sparkbox')) $('mk-sparkbox').innerHTML = spark(asset);
+            if ($('mk-val')) $('mk-val').textContent = idr(holdValue(asset));
+            if ($('mk-qty')) $('mk-qty').textContent = (p ? qtyFmt(p.qty) : '0') + ' ' + m.unit;
+            if ($('mk-status')) $('mk-status').textContent = can ? statusText() : 'Harga belum tersedia. Coba lagi sebentar.';
+            if ($('mk-go')) $('mk-go').disabled = !can;
+            preview();
+        }
+    }
+    function draw() {
+        if (screen === 'home') home(); else if (screen === 'tax') tax(); else if (screen === 'taxdone') taxDone();
+        else if (screen === 'gold' || screen === 'crypto') market(screen); else if (screen === 'detail') detail(asset);
+    }
+    const receiptNo = () => { const d = new Date(), p = n => String(n).padStart(2, '0'), r = new Uint8Array(3); crypto.getRandomValues(r);
+        return 'BCC-TAX-' + d.getFullYear() + p(d.getMonth() + 1) + p(d.getDate()) + '-' + [...r].map(b => b.toString(16).padStart(2, '0')).join('').toUpperCase(); };
+    const tradeErr = m => /insufficient balance/i.test(m) ? 'Saldo tidak cukup.' : /insufficient asset/i.test(m) ? 'Nominal melebihi aset yang dimiliki.' : /price/i.test(m) ? 'Harga belum tersedia.' : 'Transaksi gagal. Coba lagi.';
+
+    window.MORE = {
+        go(s) { screen = s; asset = null; if (s !== 'tax') taxSel = null; draw(); if (s === 'gold' || s === 'crypto') { loadHold().then(draw); startPoll(); } else stopPoll(); },
+        back() { if (screen === 'detail') this.go(mk(asset).group); else this.go('home'); },
+        open(id) { asset = id; side = 'buy'; screen = 'detail'; draw(); startPoll(); },
+        side(s) { side = s; $('seg-buy').classList.toggle('on', s === 'buy'); $('seg-sell').classList.toggle('on', s === 'sell'); $('mk-go').textContent = s === 'buy' ? 'Buy' : 'Sell'; $('mk-amt').value = ''; chips(); preview(); },
+        fill(v) { $('mk-amt').value = v; preview(); },
+        preview,
+        pickTax(i) { taxSel = i; tax(); setTimeout(() => $('tx-obj') && $('tx-obj').focus(), 30); },
+
+        async payTax() {
+            const err = m => { $('tx-err').textContent = m; }, obj = $('tx-obj').value.trim(), a = Math.floor(Number($('tx-amt').value) || 0), t = TAXES[taxSel];
+            if (obj.length < 4) return err('Nomor objek pajak / kode billing tidak valid.');
+            if (a < 1000) return err('Nominal minimal Rp 1.000.');
+            if (a > balance()) return err('Saldo tidak cukup.');
+            const btn = $('tx-go'); btn.disabled = true; err('');
+            try {
+                let rc;
+                if (sbMode()) {
+                    const { data, error } = await (await getSb()).rpc('pay_tax', { p_tax: t.k, p_object: obj, p_amount: a });
+                    if (error) throw new Error(/insufficient/i.test(error.message) ? 'Saldo tidak cukup.' : 'Pembayaran gagal. Coba lagi.');
+                    rc = data; await BCC.sync();
+                } else {
+                    rc = receiptNo();
+                    await BCC.add({ type: 'out', amount: a, category: 'Taxes', title: 'Pajak ' + TAX_SHORT[t.k] + ' (' + obj.slice(0, 20) + ')' });
+                }
+                receipt = { label: t.l, obj, amount: a, rc, at: new Date() };
+                screen = 'taxdone'; draw();
+                showMessage('Pajak ' + TAX_SHORT[t.k] + ' sebesar ' + idr(a) + ' berhasil dibayar.');
+            } catch (e) { err(e.message || 'Pembayaran gagal. Coba lagi.'); }
+            finally { if ($('tx-go')) $('tx-go').disabled = false; }
+        },
+
+        async trade() {
+            const err = m => { $('mk-err').textContent = m; }, pr = priceOf(asset), m = mk(asset), a = Math.floor(Number($('mk-amt').value) || 0);
+            if (!pr || !fresh(asset)) return err('Harga belum tersedia.');
+            if (a <= 0) return err('Masukkan nominal lebih dari 0.');
+            if (side === 'buy' && a > balance()) return err('Saldo tidak cukup.');
+            if (side === 'sell' && a > holdValue(asset) + 1) return err('Nominal melebihi aset yang dimiliki.');
+            const btn = $('mk-go'); btn.disabled = true; err('');
+            try {
+                let q, money = a;
+                if (sbMode()) {
+                    const { data, error } = await (await getSb()).rpc('trade_asset', { p_asset: asset, p_side: side, p_amount: a });
+                    if (error) throw new Error(tradeErr(String(error.message)));
+                    q = Number(data); await BCC.sync(); await loadHold();
+                } else {
+                    const p = HOLD[asset] || { qty: 0, cost: 0 };
+                    if (side === 'buy') {
+                        q = a / pr; p.qty += q; p.cost += a; HOLD[asset] = p;
+                        await BCC.add({ type: 'out', amount: a, category: 'Investments', title: 'Beli ' + m.name });
+                    } else {
+                        q = Math.min(p.qty, a / pr); money = Math.max(1, Math.round(q * pr));
+                        p.cost -= p.cost * (q / p.qty); p.qty -= q;
+                        if (p.qty < 1e-10 || p.qty * pr < 1) delete HOLD[asset]; else HOLD[asset] = p;
+                        await BCC.add({ type: 'in', amount: money, category: 'Investments', title: 'Jual ' + m.name });
+                    }
+                    saveLocal(HOLD);
+                }
+                showMessage('Simulasi: ' + (side === 'buy' ? 'membeli ' : 'menjual ') + qtyFmt(q) + ' ' + m.unit + ' seharga ' + idr(money) + '.');
+                detail(asset);
+            } catch (e) { err(e.message || 'Transaksi gagal. Coba lagi.'); if ($('mk-go')) $('mk-go').disabled = false; }
+        }
+    };
+    back.addEventListener('click', () => MORE.back());
+
+    // Harga hanya diambil saat tab More dibuka (hemat permintaan)
+    const _sel = selectNav;
+    selectNav = function (btn, name) {
+        _sel(btn, name);
+        visible = name === 'More';
+        if (visible) { screen = 'home'; asset = null; taxSel = null; draw(); } else stopPoll();
+    };
+    draw();
 })();
 </script>
 </body>
