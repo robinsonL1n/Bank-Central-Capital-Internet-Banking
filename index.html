@@ -709,6 +709,9 @@ html.cards-anim, html.cards-anim body { overflow-x: hidden; }
 .black-card .mc-bname { display: block; position: absolute; left: 9%; right: 9%; top: 9%; text-align: center; white-space: nowrap; color: #d7d9db;
     font-size: 3.8cqw; font-weight: 800; letter-spacing: .055em; }
 .black-card .mc-btitle { display: block; font-size: max(6px, 2cqw); text-transform: uppercase; letter-spacing: .3em; color: rgba(218,221,223,.4); text-align: right; white-space: nowrap; }
+.cc-sup { padding: 12px; border-radius: 12px; background: #fff; display: flex; flex-direction: column; gap: 8px; }
+.cc-warn { margin: 0; padding: 8px 10px; border-radius: 8px; background: #fef2f2; color: #b91c1c; font-size: 11.5px; font-weight: 600; }
+.cc-bad { color: #dc2626; font-weight: 700; }
     </style>
 </head>
 <body class="min-h-screen flex items-center justify-center p-4 sm:p-8 text-neutral-900 antialiased">
@@ -1511,6 +1514,24 @@ html.cards-anim, html.cards-anim body { overflow-x: hidden; }
         </form>
     </div>
 
+    
+    <!-- ===== Modal Laporan Keuangan Bulanan (akun diawasi bank) ===== -->
+    <div id="rp-modal" class="hidden fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/50" onclick="if (event.target === this) BCC_closeReport()" role="dialog" aria-modal="true" aria-labelledby="rp-title">
+        <form id="rp-form" onsubmit="BCC_submitReport(event)" class="bg-white rounded-2xl w-full max-w-sm p-6 floating-card-shadow space-y-3 max-h-[90vh] overflow-y-auto">
+            <div class="flex items-start justify-between gap-4">
+                <h3 id="rp-title" class="text-lg font-bold text-neutral-950">Monthly financial report</h3>
+                <button type="button" onclick="BCC_closeReport()" aria-label="Close" class="shrink-0 w-8 h-8 rounded-lg bg-slate-100 hover:bg-slate-200 text-neutral-600 cursor-pointer">✕</button>
+            </div>
+            <p class="text-xs text-neutral-500">Laporkan keuangan Anda bulan lalu dengan jujur. Bank mencocokkannya dengan catatan transaksi di akun Anda.</p>
+            <div><label class="block text-[11px] font-semibold text-neutral-500 mb-1" for="rp-income">Declared income (Rp)</label><input id="rp-income" type="number" min="0" step="1" class="w-full bg-slate-100/80 px-3.5 py-3 rounded-lg text-sm text-neutral-900 placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-navy-900/30 transition"></div>
+            <div><label class="block text-[11px] font-semibold text-neutral-500 mb-1" for="rp-expense">Declared expenses (Rp)</label><input id="rp-expense" type="number" min="0" step="1" class="w-full bg-slate-100/80 px-3.5 py-3 rounded-lg text-sm text-neutral-900 placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-navy-900/30 transition"></div>
+            <div><label class="block text-[11px] font-semibold text-neutral-500 mb-1" for="rp-source">Source of funds</label><input id="rp-source" type="text" maxlength="200" class="w-full bg-slate-100/80 px-3.5 py-3 rounded-lg text-sm text-neutral-900 placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-navy-900/30 transition"></div>
+            <div><label class="block text-[11px] font-semibold text-neutral-500 mb-1" for="rp-notes">Notes (optional)</label><input id="rp-notes" type="text" maxlength="300" class="w-full bg-slate-100/80 px-3.5 py-3 rounded-lg text-sm text-neutral-900 placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-navy-900/30 transition"></div>
+            <p id="rp-error" class="text-xs text-red-500 min-h-[1rem]" role="alert"></p>
+            <button id="rp-submit" type="submit" class="w-full py-3 bg-navy-900 hover:bg-neutral-950 text-white text-sm font-semibold rounded-lg shadow-md transition cursor-pointer">Send report</button>
+        </form>
+    </div>
+
     <!-- ===== Modal About / FAQ ===== -->
     <div id="info-modal" class="hidden fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/50" onclick="if (event.target === this) closeInfo()" role="dialog" aria-modal="true" aria-labelledby="info-title">
         <div class="bg-white rounded-2xl w-full max-w-lg max-h-[80vh] overflow-y-auto p-6 floating-card-shadow">
@@ -1772,7 +1793,9 @@ html.cards-anim, html.cards-anim body { overflow-x: hidden; }
         function applyByEmail(topic) {
             const p = seState.profile;
             const subject = 'Pengajuan ' + topic;
-            const body = 'Halo Tim Bank Central Capital,\n\nSaya ingin mengajukan ' + topic + '.\n\nNama: ' + fullName() + '\nEmail: ' + (p.email || '-') + '\n\nTerima kasih.';
+            let body = 'Halo Tim Bank Central Capital,\n\nSaya ingin mengajukan ' + topic + '.\n\nNama: ' + fullName() + '\nEmail: ' + (p.email || '-');
+            if (/Black/i.test(topic)) body += '\n\nSumber dana:\nEstimasi penghasilan per bulan (Rp):\nPekerjaan / usaha:\n\nSaya menyetujui bahwa uang dan akun saya diawasi Bank Central Capital, dan saya akan mengirim laporan keuangan setiap bulan.';
+            body += '\n\nTerima kasih.';
             window.location.href = 'mailto:' + BCC_OFFICIAL_EMAIL + '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
             showMessage('Membuka aplikasi email untuk pengajuan ke ' + BCC_OFFICIAL_EMAIL + '.');
         }
@@ -2687,6 +2710,22 @@ Available by invitation for Priority Clients. Send your application by email to 
 Elite card for long-standing customers.|Kartu elit untuk nasabah setia.|||||
 Exclusive card for Priority Clients.|Kartu eksklusif untuk Klien Prioritas.|||||
 Unlimited|Tanpa batas|Ilimitado|Illimité|Unbegrenzt|无限制|無制限
+Monthly financial report|Laporan keuangan bulanan|||||
+Your account is supervised by Bank Central Capital. A financial report is required every month.|Akun Anda diawasi Bank Central Capital. Laporan keuangan wajib dikirim setiap bulan.|||||
+No report is due yet.|Belum ada laporan yang jatuh tempo.|||||
+Submit report|Kirim laporan|||||
+Send report|Kirim laporan|||||
+Not submitted|Belum dikirim|||||
+Submitted|Terkirim|||||
+Accepted|Diterima|||||
+Rejected|Ditolak|||||
+Declared income (Rp)|Penghasilan yang dilaporkan (Rp)|||||
+Declared expenses (Rp)|Pengeluaran yang dilaporkan (Rp)|||||
+Source of funds|Sumber dana|||||
+Your account has been frozen by the bank.|Akun Anda dibekukan oleh bank.|||||
+The monthly financial report is overdue.|Laporan keuangan bulanan terlambat dikirim.|||||
+The last financial report was rejected. Please submit a new one.|Laporan keuangan terakhir ditolak. Silakan kirim yang baru.|||||
+Your account is restricted.|Akun Anda dibatasi.|||||
 Coming soon|Segera hadir|Próximamente|Bientôt disponible|Demnächst verfügbar|即将推出|近日公開
 Pay Tax|Bayar Pajak|Pagar impuestos|Payer les impôts|Steuern zahlen|缴纳税款|税金を支払う
 Gold|Emas|Oro|Or|Gold|黄金|ゴールド
@@ -2801,6 +2840,10 @@ Offers & promotions|Penawaran & promosi|Ofertas y promociones|Offres et promotio
         const EN_IDX = {}; ROWS.forEach(r => EN_IDX[r[0]] = r);
         // Sumber berbahasa Indonesia -> Inggris
         const ID2EN = {
+            'Akun dibatasi. Kirim laporan keuangan bulanan Anda.': 'Account restricted. Please submit your monthly financial report.',
+            'Laporan keuangan terkirim. Menunggu peninjauan bank.': 'Financial report sent. Waiting for the bank to review it.',
+            'Isi penghasilan dan pengeluaran bulan lalu.': 'Enter last month\'s income and expenses.', 'Jelaskan sumber dana Anda (minimal 5 karakter).': 'Describe your source of funds (at least 5 characters).',
+            'Laporan bulan ini sudah dikirim.': 'This month\'s report has already been sent.', 'Gagal mengirim laporan. Coba lagi.': 'Failed to send the report. Please try again.',
             'Memuat grafik…': 'Loading chart…', 'Grafik gagal dimuat.': 'The chart could not be loaded.',
             'Nomor objek pajak / kode billing tidak valid.': 'The tax object number / billing code is invalid.', 'Nominal minimal Rp 1.000.': 'The minimum amount is Rp 1.000.',
             'Pembayaran gagal. Coba lagi.': 'Payment failed. Please try again.', 'Transaksi gagal. Coba lagi.': 'Transaction failed. Please try again.',
@@ -3188,7 +3231,8 @@ const BCC_CONFIG = {
     const ICON_OFF = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.9 10.9 0 0 1 12 20C5 20 1 12 1 12a18.5 18.5 0 0 1 5.06-5.94M9.9 4.24A9.1 9.1 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19M14.12 14.12A3 3 0 1 1 9.88 9.88"/><path d="M1 1l22 22"/></svg>';
     const ICON_LOCK = '<svg viewBox="0 0 24 24" width="55%" height="55%" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>';
 
-    let cards = {};            // { silver:{n,e}, gold:{n,e}, platinum:{n,e} }
+    let cards = {};            // { silver:{n,e}, gold:{n,e}, platinum:{n,e}, black:{n,e} }
+    let SUP = null;            // status pengawasan bank (mode Supabase): { supervised, restriction, period, report_status, due }
     let active = 'silver', shown = false, curEmail = '';
     const readJson = k => { try { return JSON.parse(localStorage.getItem(k) || '{}'); } catch (e) { return {}; } };
     const writeJson = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} };
@@ -3261,9 +3305,42 @@ const BCC_CONFIG = {
             cards = {}; (data || []).forEach(c => { cards[c.tier] = { n: c.card_number, e: c.expiry }; });
             const pl = await sb.from('card_plans').select('tier,monthly_fee,daily_transfer_limit');
             if (!pl.error) (pl.data || []).forEach(p => { if (PLANS[p.tier]) PLANS[p.tier] = { fee: Number(p.monthly_fee), limit: p.daily_transfer_limit == null ? Infinity : Number(p.daily_transfer_limit) }; });
+            await loadSupervision();
             if (!cards.silver) throw new Error('no silver');
         } catch (e) { console.error('[BCC] kartu:', e); showMessage('Gagal memuat kartu dari database.'); }
     }
+    async function loadSupervision() {
+        try { const { data, error } = await (await getSb()).rpc('my_account_status'); if (error) throw error; SUP = data; }
+        catch (e) { SUP = null; console.warn('[BCC] status pengawasan:', e.message); }
+    }
+    const RESTR_TXT = { frozen: 'Your account has been frozen by the bank.', 'report overdue': 'The monthly financial report is overdue.', 'report rejected': 'The last financial report was rejected. Please submit a new one.' };
+    function supBlock() {
+        if (!SUP || !SUP.supervised) return '';
+        const st = SUP.report_status, need = SUP.period && st !== 'submitted' && st !== 'accepted';
+        const label = st === 'accepted' ? 'Accepted' : st === 'submitted' ? 'Submitted' : st === 'rejected' ? 'Rejected' : 'Not submitted';
+        const per = SUP.period ? new Date(SUP.period + 'T00:00:00').toLocaleDateString('id-ID', { month: 'long', year: 'numeric' }) : '';
+        return `<div class="cc-sup"><p class="cc-sub2">Monthly financial report</p>
+            <p class="cc-desc">Your account is supervised by Bank Central Capital. A financial report is required every month.</p>
+            ${SUP.restriction ? `<p class="cc-warn">${RESTR_TXT[SUP.restriction] || 'Your account is restricted.'}</p>` : ''}
+            ${SUP.period ? `<div class="cc-row"><span data-no-i18n>${per}</span><span class="${st === 'accepted' ? 'cc-ok' : st === 'rejected' ? 'cc-bad' : ''}">${label}</span></div>` : '<p class="cc-desc">No report is due yet.</p>'}
+            ${need ? '<button type="button" class="cc-btn" onclick="BCC_openReport()">Submit report</button>' : ''}</div>`;
+    }
+    window.BCC_openReport = function () { $('rp-form').reset(); $('rp-error').textContent = ''; $('rp-modal').classList.remove('hidden'); $('rp-income').focus(); };
+    window.BCC_closeReport = function () { $('rp-modal').classList.add('hidden'); };
+    window.BCC_submitReport = async function (ev) {
+        ev.preventDefault();
+        const btn = $('rp-submit'); btn.disabled = true; $('rp-error').textContent = '';
+        try {
+            const inc = Number($('rp-income').value), exp = Number($('rp-expense').value), src = $('rp-source').value.trim();
+            if (!(inc >= 0) || !(exp >= 0) || $('rp-income').value === '' || $('rp-expense').value === '') throw new Error('Isi penghasilan dan pengeluaran bulan lalu.');
+            if (src.length < 5) throw new Error('Jelaskan sumber dana Anda (minimal 5 karakter).');
+            const { error } = await (await getSb()).rpc('submit_monthly_report', { p_income: Math.round(inc), p_expense: Math.round(exp), p_source: src, p_notes: $('rp-notes').value.trim() || null });
+            if (error) throw new Error(/already/i.test(error.message) ? 'Laporan bulan ini sudah dikirim.' : 'Gagal mengirim laporan. Coba lagi.');
+            BCC_closeReport(); await loadSupervision(); renderShowcase();
+            showMessage('Laporan keuangan terkirim. Menunggu peninjauan bank.');
+        } catch (e) { $('rp-error').textContent = e.message; }
+        finally { btn.disabled = false; }
+    };
     window.BCC_loadCard = async function (email) {
         curEmail = String(email || '').toLowerCase(); shown = false;
         closeCardsTab(true);
@@ -3412,7 +3489,7 @@ const BCC_CONFIG = {
             } else btn = `<button type="button" class="cc-btn" onclick="BCC_useCard('${tier}')" ${isActive ? 'disabled' : ''}>${isActive ? 'In use' : 'Use this card'}</button>`;
             return `<div class="cc-item">${cardHTML(tier, own && own.n, own && own.e, locked)}
                 <div><p class="cc-name"><span data-no-i18n>${TIERS[tier].name}</span> ${badge}</p><p class="cc-desc">${DESC[tier]}</p></div>
-                <ul class="cc-plan"><li><span>Monthly fee</span><b>${fmtMoney(PLANS[tier].fee)}</b></li><li><span>Daily transfer limit</span><b>${fmtLimit(PLANS[tier].limit)}</b></li></ul>${extra}${btn}</div>`;
+                <ul class="cc-plan"><li><span>Monthly fee</span><b>${fmtMoney(PLANS[tier].fee)}</b></li><li><span>Daily transfer limit</span><b>${fmtLimit(PLANS[tier].limit)}</b></li></ul>${extra}${btn}${tier === 'black' && own ? supBlock() : ''}</div>`;
         };
         body.innerHTML = ORDER.map(item).join('');
     }
@@ -3481,7 +3558,7 @@ const BCC_CONFIG = {
             const { error } = await (await getSb()).rpc('transfer_funds', { p_to_card: dest, p_amount: amount, p_note: note || null });
             if (error) {
                 const m = String(error.message);
-                throw new Error(/limit/i.test(m) ? 'Melebihi limit transfer harian.' : /not found/i.test(m) ? 'Kartu tujuan tidak ditemukan.' : /own card/i.test(m) ? 'Tidak bisa transfer ke kartu sendiri.'
+                throw new Error(/restricted/i.test(m) ? 'Akun dibatasi. Kirim laporan keuangan bulanan Anda.' : /limit/i.test(m) ? 'Melebihi limit transfer harian.' : /not found/i.test(m) ? 'Kartu tujuan tidak ditemukan.' : /own card/i.test(m) ? 'Tidak bisa transfer ke kartu sendiri.'
                               : /insufficient/i.test(m) ? 'Saldo tidak cukup.' : 'Transfer gagal. Coba lagi.');
             }
             await BCC.sync();
@@ -3847,7 +3924,7 @@ const BCC_CONFIG = {
     }
     const receiptNo = () => { const d = new Date(), p = n => String(n).padStart(2, '0'), r = new Uint8Array(3); crypto.getRandomValues(r);
         return 'BCC-TAX-' + d.getFullYear() + p(d.getMonth() + 1) + p(d.getDate()) + '-' + [...r].map(b => b.toString(16).padStart(2, '0')).join('').toUpperCase(); };
-    const tradeErr = m => /insufficient balance/i.test(m) ? 'Saldo tidak cukup.' : /insufficient asset/i.test(m) ? 'Nominal melebihi aset yang dimiliki.' : /price/i.test(m) ? 'Harga belum tersedia.' : 'Transaksi gagal. Coba lagi.';
+    const tradeErr = m => /restricted/i.test(m) ? 'Akun dibatasi. Kirim laporan keuangan bulanan Anda.' : /insufficient balance/i.test(m) ? 'Saldo tidak cukup.' : /insufficient asset/i.test(m) ? 'Nominal melebihi aset yang dimiliki.' : /price/i.test(m) ? 'Harga belum tersedia.' : 'Transaksi gagal. Coba lagi.';
 
     window.MORE = {
         go(s) { screen = s; asset = null; if (s !== 'tax') taxSel = null; draw(); if (s === 'gold' || s === 'crypto') { loadHold().then(draw); startPoll(); } else stopPoll(); },
@@ -3870,7 +3947,7 @@ const BCC_CONFIG = {
                 let rc;
                 if (sbMode()) {
                     const { data, error } = await (await getSb()).rpc('pay_tax', { p_tax: t.k, p_object: obj, p_amount: a });
-                    if (error) throw new Error(/insufficient/i.test(error.message) ? 'Saldo tidak cukup.' : 'Pembayaran gagal. Coba lagi.');
+                    if (error) throw new Error(/restricted/i.test(error.message) ? 'Akun dibatasi. Kirim laporan keuangan bulanan Anda.' : /insufficient/i.test(error.message) ? 'Saldo tidak cukup.' : 'Pembayaran gagal. Coba lagi.');
                     rc = data; await BCC.sync();
                 } else {
                     rc = receiptNo();
