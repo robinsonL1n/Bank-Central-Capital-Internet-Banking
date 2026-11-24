@@ -415,7 +415,7 @@
     #dashboard-screen > aside { display: none; }
     #dashboard-screen > div { min-height: 0 !important; }
     #dashboard-screen > div > .absolute.inset-0 { position: relative; inset: auto; }
-    #statistics-view, #settings-view, #savings-view, #more-view { grid-column: 1 / -1; }
+    #statistics-view, #settings-view, #savings-view, #more-view, #support-view { grid-column: 1 / -1; }
 
     /* Semua panel jadi item grid: Kartu (atas) -> Tabungan | Kurva -> Pengeluaran -> Transaksi */
     #mid-col:not(.hidden), #right-col:not(.hidden), #mid-col-inner, #right-col > div { display: contents; }
@@ -760,6 +760,17 @@ html.cards-anim, html.cards-anim body { overflow-x: hidden; }
 .rv-vaso { z-index: 4; right: 8%; bottom: 8%; display: flex; flex-direction: column; align-items: flex-end; }
 .rv-vaso strong { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 5.4cqw; font-style: italic; font-weight: 600; letter-spacing: .03em; line-height: .8; }
 .rv-vaso span { margin-top: .9cqw; color: #968970; font-size: max(4.5px, 1.15cqw); letter-spacing: .25em; }
+.su-ta { width: 100%; min-height: 150px; padding: 12px 14px; border: 1.5px solid #e6e7ec; border-radius: 12px; background: #f8f9fa; font-size: 13px; line-height: 1.5; resize: vertical; outline: none; font-family: inherit; }
+.su-ta:focus { border-color: #0f1c33; background: #fff; }
+.su-drop { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 18px; text-align: center; border: 1.5px dashed #c9cbd6; border-radius: 14px; background: #f8f9fa; color: #7a7f8e; cursor: pointer; transition: border-color .2s, background .2s; }
+.su-drop svg { width: 26px; height: 26px; color: #0f1c33; }
+.su-drop b { font-size: 12.5px; color: #11131a; } .su-drop span { font-size: 11px; }
+.su-drop:hover, .su-drop.over, .su-drop:focus-visible { border-color: #0f1c33; background: #fff; outline: none; }
+.su-thumbs { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; }
+.su-th { position: relative; width: 84px; height: 84px; border-radius: 12px; overflow: hidden; border: 1.5px solid #e6e7ec; }
+.su-th img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.su-th button { position: absolute; top: 4px; right: 4px; width: 22px; height: 22px; border: 0; border-radius: 50%; background: rgba(15,28,51,.85); color: #fff; font-size: 11px; cursor: pointer; }
+.su-link { color: #1d4ed8; font-weight: 700; text-decoration: underline; }
     </style>
 </head>
 <body class="min-h-screen flex items-center justify-center p-4 sm:p-8 text-neutral-900 antialiased">
@@ -1385,6 +1396,19 @@ html.cards-anim, html.cards-anim body { overflow-x: hidden; }
             </div>
         </div>
 
+        <div id="support-view" class="hidden lg:col-span-9">
+            <div class="bg-[#f8f9fa] rounded-2xl p-6 min-h-[420px] flex flex-col">
+                <div class="mb-5 flex items-center gap-3">
+                    <button type="button" id="support-back" class="hidden w-9 h-9 rounded-xl bg-white hover:bg-slate-100 text-neutral-600 cursor-pointer shadow-2xs" aria-label="Back">←</button>
+                    <div>
+                        <h2 id="support-title" class="text-lg font-bold text-neutral-950">Support</h2>
+                        <p id="support-sub" class="text-xs text-neutral-400 mt-0.5"></p>
+                    </div>
+                </div>
+                <div id="support-body" data-no-i18n class="flex-1"></div>
+            </div>
+        </div>
+
         <div id="savings-view" class="hidden lg:col-span-9 relative min-h-[800px]">
             <div class="absolute inset-0 flex flex-col">
                 <div class="flex items-end justify-between mb-4 shrink-0">
@@ -1598,6 +1622,9 @@ html.cards-anim, html.cards-anim body { overflow-x: hidden; }
 
         // MODE PENGEMBANGAN: true = masuk dashboard hanya dengan email (tanpa OTP) dan data disimpan lokal di browser
         // (Supabase dimatikan sementara karena fitur database butuh login OTP). Ubah ke false untuk mengaktifkan OTP + Supabase.
+        // Server Railway (server.js) yang meneruskan laporan menu Support ke email BCC
+        const SUPPORT_API_URL = 'https://bcc-backend-production-e415928d.up.railway.app';
+
         const SKIP_OTP = false;
 
         // Server OTP di Railway (server.js + Mailjet). Kode OTP dibuat di browser lalu dikirim ke email lewat server ini.
@@ -1863,9 +1890,11 @@ html.cards-anim, html.cards-anim body { overflow-x: hidden; }
             const isStats = menuName === 'Statistics';
             const isSettings = menuName === 'Settings';
             const isMore = menuName === 'More';
+            const isSupport = menuName === 'Support';
             closeAllPanels();
-            document.getElementById('mid-col').classList.toggle('hidden', isSavings || isStats || isSettings || isMore);
-            document.getElementById('right-col').classList.toggle('hidden', isSavings || isStats || isSettings || isMore);
+            document.getElementById('mid-col').classList.toggle('hidden', isSavings || isStats || isSettings || isMore || isSupport);
+            document.getElementById('right-col').classList.toggle('hidden', isSavings || isStats || isSettings || isMore || isSupport);
+            document.getElementById('support-view').classList.toggle('hidden', !isSupport);
             document.getElementById('more-view').classList.toggle('hidden', !isMore);
             document.getElementById('settings-view').classList.toggle('hidden', !isSettings);
             if (isSettings) renderSettings();
@@ -4116,6 +4145,166 @@ const BCC_CONFIG = {
         _sel(btn, name);
         visible = name === 'More';
         if (visible) { screen = 'home'; asset = null; taxSel = null; draw(); } else stopPoll();
+    };
+    draw();
+})();
+</script>
+<script>
+/* =====================================================================
+   SUPPORT: pilih kendala -> jenis masalah -> tulis laporan + foto -> kirim otomatis
+   ke akun Google BCC lewat server (POST /api/support)
+   ===================================================================== */
+(function () {
+    const $ = id => document.getElementById(id);
+    const body = $('support-body'), back = $('support-back'), titleEl = $('support-title'), subEl = $('support-sub');
+    const MAX_FILES = 3, MAX_SIDE = 1280;
+    const ic = p => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+    const CATS = [
+        { k: 'bug', ic: ic('<path d="M8 8a4 4 0 0 1 8 0v1H8z"/><rect x="7" y="9" width="10" height="10" rx="5"/><path d="M3 13h4M17 13h4M5 7l3 2M19 7l-3 2M5 19l3-2M19 19l-3-2M12 9v10"/>'),
+          id: 'Bug / masalah teknis', en: 'Bug / technical problem',
+          di: 'Aplikasi error, tombol tidak berfungsi, atau data tidak muncul', de: 'App error, a button does not work, or data is not showing',
+          subs: [['Masalah login atau OTP', 'Login or OTP problem'], ['Saldo atau transaksi tidak muncul', 'Balance or transactions not showing'], ['Tombol atau halaman tidak berfungsi', 'Button or page not working'], ['Tampilan atau bahasa bermasalah', 'Display or language issue'], ['Bug lainnya', 'Other bug']] },
+        { k: 'transfer', ic: ic('<path d="M4 8h14l-3-3M20 16H6l3 3"/>'),
+          id: 'Transfer salah / bermasalah', en: 'Wrong / problematic transfer',
+          di: 'Uang terkirim ke tujuan yang salah atau tidak sampai', de: 'Money went to the wrong recipient or did not arrive', photo: true,
+          subs: [['Salah nomor kartu tujuan', 'Wrong recipient card number'], ['Salah nominal', 'Wrong amount'], ['Uang belum diterima penerima', 'Recipient has not received the money'], ['Transfer terkirim dua kali', 'Transfer sent twice'], ['Masalah transfer lainnya', 'Other transfer problem']] },
+        { k: 'scam', ic: ic('<path d="M12 3l8 3v5c0 5-3.5 8-8 10-4.5-2-8-5-8-10V6z"/><path d="M12 8v5M12 16.5v.5"/>'),
+          id: 'Penipuan (scam)', en: 'Scam / fraud',
+          di: 'Ada pihak yang mencurigakan atau transaksi yang tidak Anda kenal', de: 'Suspicious contact or a transaction you do not recognize', photo: true,
+          subs: [['Diminta kode OTP atau nomor kartu', 'Asked for my OTP code or card number'], ['Permintaan transfer mencurigakan', 'Suspicious transfer request'], ['Transaksi yang tidak saya lakukan', 'Transaction I did not make'], ['Akun palsu / mengaku sebagai BCC', 'Fake account / impersonating BCC'], ['Penipuan lainnya', 'Other scam']] },
+        { k: 'card', ic: ic('<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18M7 15h4"/>'),
+          id: 'Bug / masalah kartu', en: 'Card problem',
+          di: 'Kartu tidak muncul, nomor salah, atau klaim kartu bermasalah', de: 'Card not showing, wrong number, or card claim problem',
+          subs: [['Kartu tidak muncul', 'Card not showing'], ['Nomor kartu atau Reserve Number salah', 'Wrong card number or Reserve Number'], ['Klaim kartu Gold / Platinum bermasalah', 'Gold / Platinum claim problem'], ['Kartu Black / Reserve', 'Black / Reserve card'], ['Biaya bulanan atau limit', 'Monthly fee or limit']] },
+        { k: 'other', ic: ic('<circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.4-1 .9-1 1.7M12 17v.5"/>'),
+          id: 'Bantuan lainnya', en: 'Other help',
+          di: 'Pertanyaan atau kendala yang tidak ada di daftar', de: 'A question or problem that is not in the list',
+          subs: [['Akun dan profil', 'Account and profile'], ['Emas / Crypto (simulasi)', 'Gold / Crypto (simulation)'], ['Pembayaran pajak', 'Tax payment'], ['Saran atau masukan', 'Suggestion or feedback'], ['Lainnya', 'Something else']] }
+    ];
+    const TX = {
+        id: { title: 'Bantuan', sub: 'Pilih kendala yang Anda alami', step2: 'Pilih jenis masalah', step3: 'Ceritakan kendala Anda', msg: 'Jelaskan kendala Anda',
+              ph: 'Tulis sejelas mungkin: apa yang terjadi, kapan terjadinya, dan nomor kartu atau nominal yang terkait.', photo: 'Foto bukti', opt: 'opsional', add: 'Tambah foto', hint: 'Klik atau tarik foto ke sini. JPG, PNG, atau WebP, maksimal 3 foto.',
+              tx: 'Transaksi terkait', none: 'Tidak memilih', submit: 'Kirim', sending: 'Mengirim…', min: 'Tulis minimal 20 karakter agar kami bisa membantu.', done: 'Laporan terkirim',
+              thanks: 'Terima kasih. Laporan Anda sudah dikirim ke tim Bank Central Capital. Kami akan menghubungi Anda lewat email.', ticket: 'Nomor tiket', again: 'Buat laporan lain',
+              err: 'Gagal mengirim laporan. Periksa koneksi lalu coba lagi.', mail: 'Kirim lewat aplikasi email', many: 'Maksimal 3 foto.', badimg: 'File harus berupa gambar JPG, PNG, atau WebP.', warn: 'Jangan pernah membagikan kode OTP atau password Anda, termasuk kepada petugas.' },
+        en: { title: 'Support', sub: 'Choose the problem you are facing', step2: 'Choose the type of problem', step3: 'Tell us what happened', msg: 'Describe your problem',
+              ph: 'Be as specific as you can: what happened, when it happened, and any related card number or amount.', photo: 'Photo proof', opt: 'optional', add: 'Add photo', hint: 'Click or drag photos here. JPG, PNG, or WebP, up to 3 photos.',
+              tx: 'Related transaction', none: 'None selected', submit: 'Submit', sending: 'Sending…', min: 'Please write at least 20 characters so we can help.', done: 'Report sent',
+              thanks: 'Thank you. Your report has been sent to the Bank Central Capital team. We will contact you by email.', ticket: 'Ticket number', again: 'Create another report',
+              err: 'Could not send the report. Check your connection and try again.', mail: 'Send with your email app', many: 'Up to 3 photos.', badimg: 'The file must be a JPG, PNG, or WebP image.', warn: 'Never share your OTP code or password with anyone, including staff.' }
+    };
+    const lang = () => (typeof pf !== 'undefined' && pf.lang === 'id') ? 'id' : 'en';
+    const esc = t => String(t).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+    let step = 'cat', cat = null, sub = null, files = [], sending = false, doneTicket = '', lastErr = false;
+
+    function head(t, s, canBack) { titleEl.textContent = t; subEl.textContent = s; back.classList.toggle('hidden', !canBack); }
+    function draw() {
+        const L = lang(), T = TX[L];
+        if (step === 'cat') {
+            head(T.title, T.sub, false);
+            body.innerHTML = `<div class="mo-grid">${CATS.map(c => `<button type="button" class="mo-tile" onclick="SUPPORT.pick('${c.k}')"><span class="mo-ic">${c.ic}</span><span class="mo-name">${esc(c[L])}</span><span class="mo-desc">${esc(c[L === 'id' ? 'di' : 'de'])}</span></button>`).join('')}</div>
+                <p class="mo-note">${esc(T.warn)}</p>`;
+        } else if (step === 'sub') {
+            const c = CATS.find(x => x.k === cat); head(c[L], T.step2, true);
+            body.innerHTML = `<div class="mo-list">${c.subs.map((s, i) => `<button type="button" class="mo-opt" role="radio" aria-checked="false" onclick="SUPPORT.sub(${i})"><span class="mo-radio"></span><span>${esc(s[L === 'id' ? 0 : 1])}</span></button>`).join('')}</div>`;
+        } else if (step === 'form') {
+            const c = CATS.find(x => x.k === cat); head(c[L], c.subs[sub][L === 'id' ? 0 : 1], true);
+            const txs = ((window.BCC && BCC.data()) || []).slice().sort((a, b) => b.at - a.at).slice(0, 15);
+            const txSel = (cat === 'transfer' || cat === 'scam') && txs.length ? `<div><label class="mk-l" for="su-tx">${T.tx} (${T.opt})</label>
+                <select id="su-tx" class="mk-inp"><option value="">${T.none}</option>${txs.map(t => `<option value="${esc(t.at.toLocaleString('id-ID') + ' | ' + (t.type === 'in' ? '+' : '-') + fmtMoney(t.amount) + ' | ' + (t.title || t.category))}">${esc(t.at.toLocaleDateString('id-ID') + ' · ' + (t.title || t.category) + ' · ' + (t.type === 'in' ? '+' : '-') + fmtMoney(t.amount))}</option>`).join('')}</select></div>` : '';
+            body.innerHTML = `<div class="mk-detail" style="gap:14px">${txSel}
+                <div><label class="mk-l" for="su-msg">${T.msg}</label><textarea id="su-msg" class="su-ta" maxlength="2000" placeholder="${esc(T.ph)}"></textarea><p class="mo-note" id="su-count" style="margin-top:4px">0 / 2000</p></div>
+                <div><label class="mk-l">${T.photo} (${T.opt})</label>
+                    <div id="su-drop" class="su-drop" tabindex="0" role="button">${ic('<path d="M4 16l4-4 3 3 4-5 5 6"/><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="8.5" cy="9" r="1.5"/>')}<b>${T.add}</b><span>${T.hint}</span></div>
+                    <input id="su-file" type="file" accept="image/jpeg,image/png,image/webp" multiple hidden><div id="su-thumbs" class="su-thumbs"></div></div>
+                <p class="mk-err" id="su-err" role="alert"></p>
+                <button type="button" id="su-send" class="mk-btn" onclick="SUPPORT.send()">${T.submit}</button></div>`;
+            wireForm(); thumbs();
+        } else {
+            head(T.title, T.done, false);
+            body.innerHTML = `<div class="mk-detail mo-receipt"><div class="mo-check">✓</div><p class="mk-big" style="text-align:center;font-size:18px">${T.done}</p>
+                <p class="mo-note" style="text-align:center">${esc(T.thanks)}</p>
+                <div class="mk-pos" style="grid-template-columns:1fr"><div><p class="mk-l">${T.ticket}</p><p class="mk-v" style="font-family:'DM Mono',monospace">${esc(doneTicket)}</p></div></div>
+                <button type="button" class="mk-btn" onclick="SUPPORT.reset()">${T.again}</button></div>`;
+        }
+    }
+
+    // ----- foto: kompres di browser, lalu simpan sebagai base64 -----
+    const toB64 = blob => new Promise((ok, no) => { const r = new FileReader(); r.onload = () => ok(String(r.result).split(',')[1]); r.onerror = no; r.readAsDataURL(blob); });
+    async function compress(file) {
+        const bmp = await createImageBitmap(file);
+        const k = Math.min(1, MAX_SIDE / Math.max(bmp.width, bmp.height)), c = document.createElement('canvas');
+        c.width = Math.round(bmp.width * k); c.height = Math.round(bmp.height * k);
+        const g = c.getContext('2d'); g.fillStyle = '#fff'; g.fillRect(0, 0, c.width, c.height); g.drawImage(bmp, 0, 0, c.width, c.height);
+        const blob = await new Promise(r => c.toBlob(r, 'image/jpeg', .8));
+        return { url: URL.createObjectURL(blob), data: await toB64(blob) };
+    }
+    async function addFiles(list) {
+        const T = TX[lang()], err = $('su-err'); err.textContent = '';
+        for (const f of [...list]) {
+            if (files.length >= MAX_FILES) { err.textContent = T.many; break; }
+            if (!/^image\/(jpeg|png|webp)$/.test(f.type)) { err.textContent = T.badimg; continue; }
+            try { files.push(await compress(f)); } catch (e) { err.textContent = T.badimg; }
+        }
+        thumbs();
+    }
+    function thumbs() {
+        const el = $('su-thumbs'); if (!el) return;
+        el.innerHTML = files.map((f, i) => `<div class="su-th"><img src="${f.url}" alt=""><button type="button" aria-label="Remove" onclick="SUPPORT.rm(${i})">✕</button></div>`).join('');
+        const d = $('su-drop'); if (d) d.classList.toggle('hidden', files.length >= MAX_FILES);
+    }
+    function wireForm() {
+        const drop = $('su-drop'), inp = $('su-file'), msg = $('su-msg');
+        drop.addEventListener('click', () => inp.click());
+        drop.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); inp.click(); } });
+        inp.addEventListener('change', () => { addFiles(inp.files); inp.value = ''; });
+        ['dragenter', 'dragover'].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.add('over'); }));
+        ['dragleave', 'drop'].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.remove('over'); }));
+        drop.addEventListener('drop', e => addFiles(e.dataTransfer.files));
+        msg.addEventListener('input', () => { $('su-count').textContent = msg.value.length + ' / 2000'; });
+    }
+    async function token() {
+        try { if (typeof sbOn === 'function' && sbOn()) { const { data } = await (await getSb()).auth.getSession(); return data && data.session ? data.session.access_token : null; } } catch (e) {}
+        return null;
+    }
+
+    window.SUPPORT = {
+        pick(k) { cat = k; step = 'sub'; draw(); },
+        sub(i) { sub = i; step = 'form'; draw(); },
+        back() { if (step === 'form') { step = 'sub'; } else if (step === 'sub') { step = 'cat'; } draw(); },
+        rm(i) { files.splice(i, 1); thumbs(); },
+        reset() { step = 'cat'; cat = sub = null; files = []; draw(); },
+        async send() {
+            const T = TX[lang()], err = $('su-err'), btn = $('su-send'), msg = $('su-msg').value.trim();
+            if (msg.length < 20) { err.textContent = T.min; return; }
+            if (sending) return; sending = true; btn.disabled = true; btn.textContent = T.sending; err.textContent = '';
+            const c = CATS.find(x => x.k === cat), p = (typeof seState !== 'undefined' && seState.profile) || {};
+            const payload = { category: cat, subtype: c.subs[sub][0], message: msg, name: (typeof fullName === 'function' ? fullName() : ''), email: p.email || '',
+                tx: ($('su-tx') && $('su-tx').value) || '', lang: lang(), attachments: files.map((f, i) => ({ name: 'bukti-' + (i + 1) + '.jpg', type: 'image/jpeg', data: f.data })) };
+            const ctrl = new AbortController(), timer = setTimeout(() => ctrl.abort(), 60000);
+            try {
+                const headers = { 'Content-Type': 'application/json' }, tk = await token(); if (tk) headers.Authorization = 'Bearer ' + tk;
+                const res = await fetch(SUPPORT_API_URL.replace(/\/$/, '') + '/api/support', { method: 'POST', headers, body: JSON.stringify(payload), signal: ctrl.signal });
+                const data = await res.json().catch(() => ({}));
+                if (!res.ok || !data.success) throw new Error(data.message || 'HTTP ' + res.status);
+                doneTicket = data.ticket; files = []; step = 'done'; draw();
+                showMessage('Laporan bantuan terkirim. Nomor tiket ' + data.ticket + '.');
+            } catch (e) {
+                console.error('[BCC] support:', e);
+                err.innerHTML = esc(e.message && !/^HTTP|Failed|abort|NetworkError/i.test(e.message) ? e.message : T.err) +
+                    ` <a href="mailto:${BCC_OFFICIAL_EMAIL}?subject=${encodeURIComponent('[Support] ' + c.id + ' - ' + payload.subtype)}&body=${encodeURIComponent(msg)}" class="su-link">${T.mail}</a>`;
+                btn.disabled = false; btn.textContent = T.submit;
+            } finally { clearTimeout(timer); sending = false; }
+        }
+    };
+    back.addEventListener('click', () => SUPPORT.back());
+
+    // Gambar ulang saat menu Bantuan dibuka (mengikuti bahasa terpilih)
+    const _sel = selectNav;
+    selectNav = function (btn, name) {
+        _sel(btn, name);
+        if (name === 'Support') { step = 'cat'; cat = sub = null; files = []; draw(); }
     };
     draw();
 })();
