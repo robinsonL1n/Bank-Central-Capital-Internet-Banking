@@ -771,6 +771,27 @@ html.cards-anim, html.cards-anim body { overflow-x: hidden; }
 .su-th img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .su-th button { position: absolute; top: 4px; right: 4px; width: 22px; height: 22px; border: 0; border-radius: 50%; background: rgba(15,28,51,.85); color: #fff; font-size: 11px; cursor: pointer; }
 .su-link { color: #1d4ed8; font-weight: 700; text-decoration: underline; }
+.mk-row { grid-template-columns: 1fr 1.1fr 1fr !important; }
+.mk-mini { height: 40px; display: flex; align-items: center; }
+.mk-minisvg { width: 100%; height: 40px; display: block; }
+.mk-ph { display: block; width: 100%; height: 22px; border-radius: 8px; background: linear-gradient(90deg, #eef0f4, #f7f8fa, #eef0f4); background-size: 200% 100%; animation: mkShimmer 1.2s linear infinite; }
+@keyframes mkShimmer { from { background-position: 200% 0; } to { background-position: -200% 0; } }
+.pr-fee { margin: 0 0 4px; font-size: 12.5px; color: #44506a; }
+.pr-fee b { color: #11131a; }
+.pr-list { display: flex; flex-direction: column; gap: 10px; margin-top: 12px; }
+.pr-card, .pr-mine { display: flex; justify-content: space-between; align-items: center; gap: 14px; padding: 14px 16px; border: 1.5px solid #e6e7ec; border-radius: 14px; background: #fff; }
+.pr-mine.off { opacity: .55; }
+.pr-title { margin: 0; font-size: 13px; font-weight: 700; color: #11131a; }
+.pr-desc { margin: 3px 0 0; font-size: 11.5px; line-height: 1.45; color: #7a7f8e; }
+.pr-buy { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; flex: none; }
+.pr-buy b { font-size: 13px; color: #11131a; }
+.pr-btn, .pr-copy { padding: 7px 14px; border: 0; border-radius: 10px; background: #0f1c33; color: #fff; font-size: 12px; font-weight: 700; cursor: pointer; }
+.pr-btn:disabled { background: #e6e7ec; color: #9aa0ae; cursor: not-allowed; }
+.pr-h { margin: 18px 0 0; font-size: 13px; font-weight: 700; color: #11131a; }
+.pr-code { display: flex; align-items: center; gap: 8px; flex: none; }
+.pr-code code { padding: 6px 10px; border-radius: 8px; background: #f4f6fb; border: 1px dashed #b9bcc9; font-family: 'DM Mono', ui-monospace, monospace; font-size: 12px; font-weight: 600; color: #0f1c33; letter-spacing: .06em; }
+.pr-copy { background: #e6e7ec; color: #11131a; padding: 6px 10px; }
+@media (max-width: 520px) { .pr-card, .pr-mine { flex-direction: column; align-items: flex-start; } .pr-buy { align-items: flex-start; } }
     </style>
 </head>
 <body class="min-h-screen flex items-center justify-center p-4 sm:p-8 text-neutral-900 antialiased">
@@ -2811,6 +2832,8 @@ By invitation only|Hanya dengan undangan|||||
 Required|Wajib|||||
 Black card holder|Pemegang kartu Black|||||
 Minimum assets under management|Minimum aset kelolaan|||||
+Discounts|Diskon|Descuentos|Réductions|Rabatte|折扣|割引
+Buy discounts and vouchers with your balance|Beli diskon dan voucher dengan saldo Anda|||||
 Coming soon|Segera hadir|Próximamente|Bientôt disponible|Demnächst verfügbar|即将推出|近日公開
 Pay Tax|Bayar Pajak|Pagar impuestos|Payer les impôts|Steuern zahlen|缴纳税款|税金を支払う
 Gold|Emas|Oro|Or|Gold|黄金|ゴールド
@@ -3479,8 +3502,9 @@ const BCC_CONFIG = {
     const usedToday = () => ((window.BCC && BCC.data()) || []).filter(t => t.type === 'out' && t.category === 'Transfers' && sameDay(t.at, new Date())).reduce((s, t) => s + t.amount, 0);
     const fmtLimit = v => isFinite(v) ? fmtMoney(v) : 'Unlimited';
     const limitLeft = () => Math.max(0, PLANS[topTier()].limit - usedToday());
+    window.BCC_currentFee = () => PLANS[topTier()].fee;
     window.BCC_chargeFee = async function () {
-        const tier = topTier(), fee = PLANS[tier].fee;
+        const tier = topTier(), pct = (!sbOn() && window.BCC_feeDiscountPct) ? BCC_feeDiscountPct() : 0, fee = Math.round(PLANS[tier].fee * (1 - pct / 100));
         if (!sbOn() && !(fee > 0)) return;
         try {
             if (sbOn()) {
@@ -3492,7 +3516,7 @@ const BCC_CONFIG = {
             const now = new Date();
             const done = (BCC.data() || []).some(t => t.category === 'Fees' && t.at.getFullYear() === now.getFullYear() && t.at.getMonth() === now.getMonth());
             if (done || BCC.balance() < fee) return;                  // sekali per bulan, hanya jika saldo cukup
-            await BCC.add({ type: 'out', amount: fee, category: 'Fees', title: 'Biaya administrasi bulanan (' + TIERS[tier].name + ')' });
+            await BCC.add({ type: 'out', amount: fee, category: 'Fees', title: 'Biaya administrasi bulanan (' + TIERS[tier].name + ')' + (pct ? ' - diskon ' + pct + '%' : '') });
             showMessage('Biaya administrasi bulanan ' + fmtMoney(fee) + ' telah dipotong.');
         } catch (e) { console.error('[BCC] biaya bulanan:', e); }
     };
@@ -3782,6 +3806,7 @@ const BCC_CONFIG = {
     const TAX_SHORT = { pbb: 'PBB', pkb: 'PKB', pph: 'PPh', bphtb: 'BPHTB', other: 'Pajak daerah' };
     const mk = id => MARKETS.find(m => m.id === id);
     const idr = n => fmtMoney(Math.round(n));
+    const esc = t => String(t).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
     const qtyFmt = q => Number(q).toLocaleString('id-ID', { maximumFractionDigits: 8 });
     const sbMode = () => typeof sbOn === 'function' && sbOn();
     const email = () => ((typeof seState !== 'undefined' && seState.profile && seState.profile.email) || 'guest').toLowerCase();
@@ -3864,7 +3889,7 @@ const BCC_CONFIG = {
             ${tile('tax', 'tax', 'Pay Tax', 'Pay taxes from your balance', false)}
             ${tile('gold', 'gold', 'Gold', 'Live gold price, simulated trading', false)}
             ${tile('crypto', 'crypto', 'Crypto', 'Live crypto prices, simulated trading', false)}
-            ${tile('promo', 'promo', 'Promo Code', 'Discounts for your transactions', true)}</div>`;
+            ${tile('promo', 'promo', 'Discounts', 'Buy discounts and vouchers with your balance', false)}</div>`;
     }
     function tax() {
         setHead('Pay Tax', 'Choose the tax you want to pay', true);
@@ -3903,13 +3928,14 @@ const BCC_CONFIG = {
         const rows = MARKETS.filter(m => m.group === group).map(m => {
             const p = priceOf(m.id), hv = holdValue(m.id);
             return `<button type="button" class="mk-row" onclick="MORE.open('${m.id}')">
-                <div class="mk-name"><b>${m.name}</b><small>${m.sym}${m.id === 'gold' ? ' / gram' : ''}</small></div>${spark(m.id) || '<span></span>'}
+                <div class="mk-name"><b>${m.name}</b><small>${m.sym}${m.id === 'gold' ? ' / gram' : ''}</small></div><div class="mk-mini" data-id="${m.id}">${miniSVG(m.id) || '<span class="mk-ph"></span>'}</div>
                 <div class="mk-px"><b>${p ? idr(p) : '—'}</b>${chgHTML(m.id)}</div>
                 ${hv ? `<div class="mk-hold">${qtyFmt(HOLD[m.id].qty)} ${m.unit} ≈ ${idr(hv)}</div>` : ''}</button>`;
         }).join('');
         body.innerHTML = bar() + `<div class="mk-list">${rows}</div>
             <p class="mo-note" id="mk-status">${statusText()}</p>
             <p class="mo-note">Simulasi: tidak ada transaksi sungguhan. Harga beli dan jual sama (tanpa selisih/biaya).${group === 'gold' ? ' Harga emas memakai PAX Gold (PAXG) sebagai acuan harga emas dunia.' : ''}</p>`;
+        ensureMini(group);
     }
     function detail(id) {
         const m = mk(id); setHead(m.name, m.id === 'gold' ? 'Price per gram' : 'Price per ' + m.sym, true);
@@ -4064,8 +4090,111 @@ const BCC_CONFIG = {
         attachChart(box);
     }
 
+    // ---------- Grafik mini di kartu daftar (candle crypto, kurva emas) ----------
+    const CHART_KEY = 'bcc_charts_v1', sleep = ms => new Promise(r => setTimeout(r, ms));
+    try { const saved = JSON.parse(localStorage.getItem(CHART_KEY) || '{}'); Object.keys(saved).forEach(k => { if (saved[k] && saved[k].data && Date.now() - saved[k].t < 30 * 60000) chartCache[k] = saved[k]; }); } catch (e) {}
+    function saveCharts() { try { const o = {}; Object.keys(chartCache).forEach(k => { if (/:1$/.test(k) && chartCache[k] && chartCache[k].data) o[k] = chartCache[k]; }); localStorage.setItem(CHART_KEY, JSON.stringify(o)); } catch (e) {} }
+    const fresh1 = id => { const c = chartCache[id + ':1']; return c && ((c.err && Date.now() - c.t < 60000) || (!c.err && c.data && Date.now() - c.t < 10 * 60000)); };
+    async function fetchInto(id) {
+        const m = mk(id), r = await fetch(CGBASE + '/coins/' + m.cg + (id === 'gold' ? '/market_chart' : '/ohlc') + '?vs_currency=idr&days=1');
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        const d = await r.json();
+        chartCache[id + ':1'] = { t: Date.now(), data: id === 'gold' ? downsample(d.prices.map(([t, p]) => [t, p / OZ]), 180) : d };
+        saveCharts();
+    }
+    function miniSVG(id) {
+        const c = chartCache[id + ':1']; if (!c || c.err || !c.data || !c.data.length) return '';
+        const W = 120, H = 40, P = 3;
+        if (id === 'gold') {
+            const d = downsample(c.data, 48), v = d.map(x => x[1]), mn = Math.min(...v), mx = Math.max(...v), rg = mx - mn || 1;
+            const pts = d.map((x, i) => [P + (W - 2 * P) * i / (d.length - 1), P + (H - 2 * P) * (1 - (x[1] - mn) / rg)]);
+            const line = pts.map((p, i) => (i ? 'L' : 'M') + p[0].toFixed(1) + ' ' + p[1].toFixed(1)).join(' ');
+            const col = v[v.length - 1] >= v[0] ? '#16a34a' : '#dc2626';
+            return `<svg viewBox="0 0 ${W} ${H}" class="mk-minisvg" preserveAspectRatio="none"><defs><linearGradient id="mg-gold" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${col}" stop-opacity=".28"/><stop offset="1" stop-color="${col}" stop-opacity="0"/></linearGradient></defs>
+                <path d="${line} L${pts[pts.length - 1][0].toFixed(1)} ${H} L${pts[0][0].toFixed(1)} ${H} Z" fill="url(#mg-gold)"/><path d="${line}" fill="none" stroke="${col}" stroke-width="1.6" stroke-linejoin="round" vector-effect="non-scaling-stroke"/></svg>`;
+        }
+        const raw = c.data, g = Math.ceil(raw.length / 24), cs = [];
+        for (let i = 0; i < raw.length; i += g) { const grp = raw.slice(i, i + g); cs.push([grp[0][1], Math.max(...grp.map(x => x[2])), Math.min(...grp.map(x => x[3])), grp[grp.length - 1][4]]); }
+        const hi = Math.max(...cs.map(x => x[1])), lo = Math.min(...cs.map(x => x[2])), rg = hi - lo || 1, n = cs.length, step = (W - 2 * P) / n, bw = Math.max(1.2, step * .6);
+        const y = v => P + (H - 2 * P) * (1 - (v - lo) / rg);
+        let out = '';
+        cs.forEach((k, i) => { const x = P + step * (i + .5), col = k[3] >= k[0] ? '#16a34a' : '#dc2626', t = y(Math.max(k[0], k[3])), b = y(Math.min(k[0], k[3]));
+            out += `<line x1="${x.toFixed(1)}" x2="${x.toFixed(1)}" y1="${y(k[1]).toFixed(1)}" y2="${y(k[2]).toFixed(1)}" stroke="${col}" stroke-width="1"/><rect x="${(x - bw / 2).toFixed(1)}" y="${t.toFixed(1)}" width="${bw.toFixed(1)}" height="${Math.max(1, b - t).toFixed(1)}" fill="${col}"/>`; });
+        return `<svg viewBox="0 0 ${W} ${H}" class="mk-minisvg" preserveAspectRatio="none">${out}</svg>`;
+    }
+    const updateMini = id => document.querySelectorAll('.mk-mini[data-id="' + id + '"]').forEach(el => { el.innerHTML = miniSVG(id) || '<span class="mk-ph"></span>'; });
+    let miniBusy = false;
+    async function ensureMini(group) {           // ambil data satu per satu (hemat batas permintaan API)
+        if (miniBusy) return;
+        const q = MARKETS.filter(m => m.group === group && !fresh1(m.id)); if (!q.length) return;
+        miniBusy = true;
+        try {
+            for (const m of q) {
+                if (screen !== group) break;
+                try { await fetchInto(m.id); } catch (e) { console.error('[BCC] grafik mini:', e); chartCache[m.id + ':1'] = { err: true, t: Date.now() }; }
+                updateMini(m.id); await sleep(1100);
+            }
+        } finally { miniBusy = false; }
+    }
+
+    // ---------- Diskon: dibeli dengan saldo (bukan diklaim) ----------
+    const PROMO_KEY = 'bcc_promo_v1';
+    const CAT = [
+        { id: 'fee5',   kind: 'fee_discount', pct: 5,  days: 180, price: 50000, prefix: 'FEE',  t: { id: 'Diskon biaya bulanan 5%', en: 'Monthly fee discount 5%' }, d: { id: 'Potongan 5% dari biaya bulanan kartu selama 6 bulan, berlaku otomatis.', en: '5% off your card\'s monthly fee for 6 months, applied automatically.' } },
+        { id: 'food20', kind: 'voucher',      pct: 20, days: 30,  price: 15000, prefix: 'FOOD', t: { id: 'Diskon makanan 20%', en: 'Food discount 20%' }, d: { id: 'Tunjukkan kode acak di restoran mitra. Berlaku 30 hari.', en: 'Show the random code at partner restaurants. Valid for 30 days.' } },
+        { id: 'shop10', kind: 'voucher',      pct: 10, days: 30,  price: 20000, prefix: 'SHOP', t: { id: 'Diskon belanja 10%', en: 'Shopping discount 10%' }, d: { id: 'Tunjukkan kode acak di toko mitra. Berlaku 30 hari.', en: 'Show the random code at partner stores. Valid for 30 days.' } },
+        { id: 'ride15', kind: 'voucher',      pct: 15, days: 30,  price: 10000, prefix: 'RIDE', t: { id: 'Diskon transportasi 15%', en: 'Transport discount 15%' }, d: { id: 'Tunjukkan kode acak pada layanan transportasi mitra. Berlaku 30 hari.', en: 'Show the random code with partner transport services. Valid for 30 days.' } }
+    ];
+    const PT = {
+        id: { sub: 'Beli diskon dengan saldo Anda', fee: 'Biaya bulanan kartu Anda', withd: 'dengan diskon', buy: 'Beli', mine: 'Diskon saya', none: 'Belum ada diskon yang dibeli.', code: 'Kode', copy: 'Salin', copied: 'Tersalin',
+              until: 'Berlaku sampai', auto: 'Berlaku otomatis pada biaya bulanan', show: 'Tunjukkan kode ini saat membayar', bought: 'Berhasil membeli', active: 'Aktif', exp: 'Kedaluwarsa', bal: 'Saldo', days: 'hari',
+              nofunds: 'Saldo tidak cukup.', already: 'Diskon ini masih aktif.', fail: 'Pembelian gagal. Coba lagi.', restricted: 'Akun dibatasi. Kirim laporan keuangan bulanan Anda.', pay: 'Pembelian diskon dipotong dari saldo Anda.' },
+        en: { sub: 'Buy discounts with your balance', fee: 'Your card monthly fee', withd: 'with discount', buy: 'Buy', mine: 'My discounts', none: 'No discounts purchased yet.', code: 'Code', copy: 'Copy', copied: 'Copied',
+              until: 'Valid until', auto: 'Applied automatically to your monthly fee', show: 'Show this code when paying', bought: 'Purchased', active: 'Active', exp: 'Expired', bal: 'Balance', days: 'days',
+              nofunds: 'Not enough balance.', already: 'This discount is still active.', fail: 'Purchase failed. Please try again.', restricted: 'Account restricted. Please submit your monthly financial report.', pay: 'Discount purchases are deducted from your balance.' }
+    };
+    const pl = () => (typeof pf !== 'undefined' && pf.lang === 'id') ? 'id' : 'en';
+    let MY = [], CATNUM = {};
+    const localPromos = () => { try { return (JSON.parse(localStorage.getItem(PROMO_KEY) || '{}')[email()]) || []; } catch (e) { return []; } };
+    const saveLocalPromos = a => { try { const all = JSON.parse(localStorage.getItem(PROMO_KEY) || '{}'); all[email()] = a; localStorage.setItem(PROMO_KEY, JSON.stringify(all)); } catch (e) {} };
+    const num = (it, k) => (CATNUM[it.id] && CATNUM[it.id][k] != null) ? CATNUM[it.id][k] : it[k];
+    async function loadPromos() {
+        if (sbMode()) {
+            try {
+                const sb = await getSb();
+                const c = await sb.from('promo_catalog').select('id,price,discount_pct,valid_days,active');
+                if (!c.error) (c.data || []).forEach(r => { CATNUM[r.id] = { price: Number(r.price), pct: Number(r.discount_pct), days: Number(r.valid_days), active: r.active }; });
+                const { data, error } = await sb.from('user_promos').select('promo_id,code,kind,discount_pct,expires_at').order('purchased_at', { ascending: false });
+                if (error) throw error;
+                MY = (data || []).map(r => ({ id: r.promo_id, code: r.code, kind: r.kind, pct: Number(r.discount_pct), exp: Date.parse(r.expires_at) }));
+            } catch (e) { console.warn('[BCC] diskon:', e.message); }
+        } else MY = localPromos();
+    }
+    const feeActive = () => MY.find(p => p.kind === 'fee_discount' && p.exp > Date.now());
+    window.BCC_feeDiscountPct = () => { const a = (sbMode() ? MY : localPromos()).filter(p => p.kind === 'fee_discount' && p.exp > Date.now()); return a.length ? Math.max(...a.map(p => p.pct)) : 0; };
+    function promoScreen() {
+        const L = pl(), T = PT[L], title = L === 'id' ? 'Diskon' : 'Discounts';
+        setHead(title, T.sub, true);
+        const base = window.BCC_currentFee ? BCC_currentFee() : 0, act = feeActive();
+        const feeLine = base > 0 ? `<p class="pr-fee">${T.fee}: <b>${idr(base)}</b>${act ? ` → ${T.withd} ${act.pct}%: <b class="up">${idr(Math.round(base * (1 - act.pct / 100)))}</b>` : ''}</p>` : '';
+        const date = ts => new Date(ts).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
+        const cards = CAT.filter(it => !(CATNUM[it.id] && CATNUM[it.id].active === false)).map(it => {
+            const blocked = it.kind === 'fee_discount' && act;
+            return `<div class="pr-card"><div><p class="pr-title">${esc(it.t[L])}</p><p class="pr-desc">${esc(it.d[L])}</p></div>
+                <div class="pr-buy"><b>${idr(num(it, 'price'))}</b><button type="button" class="pr-btn" ${blocked ? 'disabled' : ''} onclick="MORE.buyPromo('${it.id}')">${blocked ? T.active : T.buy}</button></div></div>`;
+        }).join('');
+        const mine = MY.length ? MY.map((p, i) => {
+            const it = CAT.find(x => x.id === p.id) || { t: { id: p.id, en: p.id } }, live = p.exp > Date.now();
+            return `<div class="pr-mine${live ? '' : ' off'}"><div><p class="pr-title">${esc(it.t[L])}</p><p class="pr-desc">${p.kind === 'fee_discount' ? T.auto : T.show} • ${live ? T.until : T.exp} ${date(p.exp)}</p></div>
+                <div class="pr-code"><code>${esc(p.code)}</code><button type="button" class="pr-copy" onclick="MORE.copyCode(${i})">${T.copy}</button></div></div>`;
+        }).join('') : `<p class="mo-note">${T.none}</p>`;
+        body.innerHTML = `<div data-no-i18n>${feeLine}<p class="mk-l" style="margin-top:6px">${T.bal}: <b style="color:#11131a">${idr(balance())}</b></p>
+            <div class="pr-list">${cards}</div><p class="mo-note">${T.pay}</p><h4 class="pr-h">${T.mine}</h4><div class="pr-list">${mine}</div></div>`;
+    }
+    const promoErr = m => { const T = PT[pl()]; return /restricted/i.test(m) ? T.restricted : /insufficient/i.test(m) ? T.nofunds : /already/i.test(m) ? T.already : T.fail; };
+
     function draw() {
-        if (screen === 'home') home(); else if (screen === 'tax') tax(); else if (screen === 'taxdone') taxDone();
+        if (screen === 'home') home(); else if (screen === 'tax') tax(); else if (screen === 'taxdone') taxDone(); else if (screen === 'promo') promoScreen();
         else if (screen === 'gold' || screen === 'crypto') market(screen); else if (screen === 'detail') detail(asset);
     }
     const receiptNo = () => { const d = new Date(), p = n => String(n).padStart(2, '0'), r = new Uint8Array(3); crypto.getRandomValues(r);
@@ -4073,7 +4202,7 @@ const BCC_CONFIG = {
     const tradeErr = m => /restricted/i.test(m) ? 'Akun dibatasi. Kirim laporan keuangan bulanan Anda.' : /insufficient balance/i.test(m) ? 'Saldo tidak cukup.' : /insufficient asset/i.test(m) ? 'Nominal melebihi aset yang dimiliki.' : /price/i.test(m) ? 'Harga belum tersedia.' : 'Transaksi gagal. Coba lagi.';
 
     window.MORE = {
-        go(s) { screen = s; asset = null; if (s !== 'tax') taxSel = null; draw(); if (s === 'gold' || s === 'crypto') { loadHold().then(draw); startPoll(); } else stopPoll(); },
+        go(s) { screen = s; asset = null; if (s !== 'tax') taxSel = null; draw(); if (s === 'gold' || s === 'crypto') { loadHold().then(draw); startPoll(); } else stopPoll(); if (s === 'promo') loadPromos().then(() => { if (screen === 'promo') draw(); }); },
         back() { if (screen === 'detail') this.go(mk(asset).group); else this.go('home'); },
         open(id) { asset = id; side = 'buy'; screen = 'detail'; draw(); startPoll(); },
         side(s) { side = s; $('seg-buy').classList.toggle('on', s === 'buy'); $('seg-sell').classList.toggle('on', s === 'sell'); $('mk-go').textContent = s === 'buy' ? 'Buy' : 'Sell'; $('mk-amt').value = ''; chips(); preview(); },
@@ -4081,6 +4210,25 @@ const BCC_CONFIG = {
         preview,
         tf(k) { tf = k; document.querySelectorAll('.mk-tf button').forEach(b => b.classList.toggle('on', b.textContent === k)); loadChart(asset); },
         retry() { delete chartCache[asset + ':' + TF[tf]]; loadChart(asset); },
+        async buyPromo(id) {
+            const it = CAT.find(x => x.id === id), L = pl(), T = PT[L], price = num(it, 'price'), pct = num(it, 'pct'), days = num(it, 'days');
+            if (price > balance()) return showMessage(T.nofunds);
+            if (it.kind === 'fee_discount' && feeActive()) return showMessage(T.already);
+            try {
+                if (sbMode()) {
+                    const { error } = await (await getSb()).rpc('buy_promo', { p_promo: id });
+                    if (error) throw new Error(error.message);
+                    await BCC.sync(); await loadPromos();
+                } else {
+                    await BCC.add({ type: 'out', amount: price, category: 'Promo', title: 'Beli diskon: ' + it.t.id });
+                    const r = new Uint8Array(4); crypto.getRandomValues(r);
+                    const a = localPromos(); a.unshift({ id, kind: it.kind, pct, code: it.prefix + '-' + [...r].map(b => b.toString(16).padStart(2, '0')).join('').toUpperCase(), exp: Date.now() + days * 86400000 });
+                    saveLocalPromos(a); MY = a;
+                }
+                showMessage(T.bought + ' ' + it.t[L] + '.'); draw();
+            } catch (e) { showMessage(promoErr(String(e.message))); }
+        },
+        copyCode(i) { const p = MY[i]; if (!p) return; (navigator.clipboard ? navigator.clipboard.writeText(p.code) : Promise.reject()).then(() => showMessage(PT[pl()].copied + ': ' + p.code), () => showMessage(p.code)); },
         pickTax(i) { taxSel = i; tax(); setTimeout(() => $('tx-obj') && $('tx-obj').focus(), 30); },
 
         async payTax() {
